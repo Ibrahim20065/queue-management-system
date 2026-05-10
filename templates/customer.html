@@ -4,10 +4,15 @@
         <meta name="viewport" content="width=device-width , initial-scale=1.0">
         <title>Queue System</title>
         <link rel="stylesheet" href="{{ url_for('static' , filename='css/style.css')}}">
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     </head>
 <body>
     <div class="container">
+    <div class="card qr-card">
+        <h2>Scan to Join</h2>    
+        <p>Scan this QR code on your phone to join the queue</p>
+        <div id="qrcode"></div>
+    </div>    
 
         <div class="header">
             <h1>Queue Management</h1>
@@ -43,6 +48,19 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+   <script>
+    window.addEventListener('load', function() {
+        var qr = new QRCode(document.getElementById("qrcode"), {
+            text: window.location.href,
+            width: 160,
+            height: 160,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    });
+</script>
             
 
 
