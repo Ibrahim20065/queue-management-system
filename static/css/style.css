@@ -1,1 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #666;
+    font-size: 14px;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+}
+
+.card h2 {
+    font-size: 20px;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.card p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+button {
+    background: #4361ee;
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+button:hover {
+    background: #3451d1;
+}
+
+button:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+}
+
+.ticket-number {
+    font-size: 80px;
+    font-weight: 700;
+    color: #4361ee;
+    line-height: 1;
+    margin: 16px 0;
+}
+
+.status-box {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 24px 0;
+    padding: 20px;
+    background: #f0f4f8;
+    border-radius: 12px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.status-msg {
+    font-size: 15px;
+    color: #4361ee;
+    font-weight: 500;
+    margin-bottom: 8px !important;
+}
+
+.refresh-note {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 0 !important;
+}
+
+.error {
+    color: #e53e3e;
+    font-size: 14px;
+    margin-top: 12px;
+    margin-bottom: 0 !important;
+}
+
+.hidden {
+    display: none;
+}

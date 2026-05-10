@@ -1,1 +1,52 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width , initial-scale=1.0">
+        <title>Queue System</title>
+        <link rel="stylesheet" href="{{ url_for('static' , filename='css/style.css')}}">
+
+    </head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <h1>Queue Management</h1>
+            <p>Join the queue and we'll call your number when it's your turn</p>
+        </div>
+
+        <!-- Join Section -->
+        <div id="join-section" class="card">
+            <h2>Join the Queue</h2>
+            <p>Click the button below to get your ticket number</p>
+            <button id="join-btn" onclick="joinQueue()">Join Queue</button>
+            <p id="error-msg" class="error hidden"></p>
+        </div>
+
+        <!-- Ticket Section (hidden until customer joins) -->
+        <div id="ticket-section" class="card hidden">
+            <h2>Your Ticket</h2>
+            <div class="ticket-number" id="ticket-display">--</div>
+            <div class="status-box">
+                <div class="stat">
+                    <span class="stat-label">Your position</span>
+                    <span class="stat-value" id="position-display">--</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Now serving</span>
+                    <span class="stat-value" id="serving-display">--</span>
+                </div>
+            </div>
+            <p id="status-msg" class="status-msg"></p>
+            <p class="refresh-note">Position updates automatically every 5 seconds</p>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+            
+
+
+
+</body>
+</html>
 
