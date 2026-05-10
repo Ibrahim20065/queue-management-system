@@ -139,3 +139,80 @@ button:disabled {
 .hidden {
     display: none;
 }
+
+.staff-container {
+    max-width: 600px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.btn-success {
+    background: #38a169;
+}
+
+.btn-success:hover {
+    background: #2f855a;
+}
+
+.btn-danger {
+    background: #e53e3e;
+}
+
+.btn-danger:hover {
+    background: #c53030;
+}
+
+.control-msg {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 0 !important;
+}
+
+.queue-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: #f0f4f8;
+}
+
+.queue-item.serving {
+    background: #ebf8ee;
+    border: 1px solid #9ae6b4;
+}
+
+.queue-item.done-summary {
+    background: #f7fafc;
+    color: #aaa;
+    font-size: 13px;
+    justify-content: center;
+}
+
+.ticket-badge {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.serving-badge {
+    color: #276749;
+}
+
+.queue-status {
+    font-size: 13px;
+    color: #666;
+}
+
+.empty-msg {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 0 !important;
+}

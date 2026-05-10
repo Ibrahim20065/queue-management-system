@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
 
+    <div class="container staff-container">
+
+        <div class="header">
+            <h1>Staff Dashboard</h1>
+            <p>Manage the queue from here</p>
+        </div>
+
+        <!-- Queue Controls -->
+        <div class="card">
+            <h2>Queue Controls</h2>
+            <div class="controls-grid">
+                <button onclick="createQueue()">Start New Queue</button>
+                <button onclick="callNext()" id="next-btn" class="btn-success">Call Next</button>
+                <button onclick="closeQueue()" class="btn-danger">Close Queue</button>
+            </div>
+            <p id="control-msg" class="control-msg hidden"></p>
+        </div>
+
+        <!-- Now Serving -->
+        <div class="card">
+            <h2>Now Serving</h2>
+            <div class="ticket-number" id="serving-display">--</div>
+        </div>
+
+        <!-- Queue List -->
+        <div class="card">
+            <h2>Queue List</h2>
+            <div id="queue-list">
+                <p class="empty-msg">No active queue</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/staff.js') }}"></script>
+</body>
+</html>
