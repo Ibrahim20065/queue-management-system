@@ -15,21 +15,47 @@
             <p>Manage the queue from here</p>
         </div>
 
+        <!-- Create Queue Card -->
+        <div class="card" id="create-queue-card">
+            <h2>Create New Queue</h2>
+
+            <div class="form-group">
+                <label for="queue-name">Queue Name</label>
+                <input type="text" id="queue-name" placeholder="e.g. Main Counter, Branch A" value="Main Queue" />
+            </div>
+
+            <div class="form-group">
+                <label>Services Offered</label>
+                <div id="services-list">
+                    <div class="service-item">
+                        <input type="text" placeholder="e.g. Account Opening" class="service-input" />
+                        <button class="remove-service-btn" onclick="removeService(this)">✕</button>
+                    </div>
+                </div>
+                <button class="add-service-btn" onclick="addService()">+ Add Service</button>
+            </div>
+
+            <button onclick="createQueue()">Start Queue</button>
+            <p id="control-msg" class="control-msg hidden"></p>
+        </div>
+
         <!-- Queue Controls -->
-        <div class="card">
-            <h2>Queue Controls</h2>
+        <div class="card" id="queue-controls-card">
+            <h2 id="queue-name-display">Queue</h2>
             <div class="controls-grid">
-                <button onclick="createQueue()">Start New Queue</button>
-                <button onclick="callNext()" id="next-btn" class="btn-success">Call Next</button>
+                <button onclick="callNext()" class="btn-success">Call Next</button>
                 <button onclick="closeQueue()" class="btn-danger">Close Queue</button>
             </div>
-            <p id="control-msg" class="control-msg hidden"></p>
         </div>
 
         <!-- Now Serving -->
         <div class="card">
             <h2>Now Serving</h2>
             <div class="ticket-number" id="serving-display">--</div>
+            <div id="serving-details" class="serving-details hidden">
+                <p id="serving-name"></p>
+                <p id="serving-service"></p>
+            </div>
         </div>
 
         <!-- Queue List -->

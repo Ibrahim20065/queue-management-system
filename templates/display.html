@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Display</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="display-body">
+
+    <div class="display-container">
+
+        <!-- Header -->
+        <div class="display-header">
+            <h1 id="display-queue-name">Queue Management System</h1>
+            <p id="display-time"></p>
+        </div>
+
+        <!-- Now Serving -->
+        <div class="display-serving-card">
+            <p class="display-label">Now Serving</p>
+            <div class="display-ticket" id="display-ticket">--</div>
+            <div id="display-customer-info" class="display-customer-info hidden">
+                <p id="display-customer-name"></p>
+                <p id="display-customer-service"></p>
+            </div>
+        </div>
+
+        <!-- Up Next -->
+        <div class="display-next-card">
+            <p class="display-label">Up Next</p>
+            <div id="display-next-list">
+                <p class="display-empty">No customers waiting</p>
+            </div>
+        </div>
+
+        <!-- Waiting Count -->
+        <div class="display-waiting-card">
+            <p class="display-label">Customers Waiting</p>
+            <div class="display-waiting-count" id="display-waiting-count">0</div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('display-time').textContent =
+                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function loadDisplay() {
+            fetch('/api/display')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('display-ticket').textContent = '--';
+                        document.getElementById('display-customer-info').classList.add('hidden');
+                        document.getElementById('display-waiting-count').textContent = '0';
+                        document.getElementById('display-next-list').innerHTML =
+                            '<p class="display-empty">No active queue</p>';
+                        return;
+                    }
+
+                    document.getElementById('display-queue-name').textContent = data.queue_name;
+                    document.getElementById('display-waiting-count').textContent = data.waiting_count;
+
+                    if (data.serving) {
+                        document.getElementById('display-ticket').textContent = data.serving.ticket_number;
+                        document.getElementById('display-customer-info').classList.remove('hidden');
+                        document.getElementById('display-customer-name').textContent = data.serving.customer_name;
+                        document.getElementById('display-customer-service').textContent = data.serving.service;
+                    } else {
+                        document.getElementById('display-ticket').textContent = '--';
+                        document.getElementById('display-customer-info').classList.add('hidden');
+                    }
+
+                    if (data.next_customers && data.next_customers.length > 0) {
+                        document.getElementById('display-next-list').innerHTML =
+                            data.next_customers.map(c =>
+                                `<div class="display-next-item">
+                                    <span class="display-next-ticket">#${c.ticket_number}</span>
+                                    <span class="display-next-name">${c.customer_name}</span>
+                                    <span class="display-next-service">${c.service}</span>
+                                </div>`
+                            ).join('');
+                    } else {
+                        document.getElementById('display-next-list').innerHTML =
+                            '<p class="display-empty">No customers waiting</p>';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('display-ticket').textContent = '--';
+                });
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+        loadDisplay();
+        setInterval(loadDisplay, 5000);
+    </script>
+
+</body>
+</html>

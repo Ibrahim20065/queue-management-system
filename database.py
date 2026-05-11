@@ -24,8 +24,19 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             queue_id INTEGER NOT NULL,
             ticket_number INTEGER NOT NULL,
+            customer_name TEXT DEFAULT 'Guest',
+            service TEXT DEFAULT 'General',
             status TEXT DEFAULT 'waiting',
             joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (queue_id) REFERENCES queues (id)
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS services (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            queue_id INTEGER NOT NULL,
+            service_name TEXT NOT NULL,
             FOREIGN KEY (queue_id) REFERENCES queues (id)
         )
     ''')

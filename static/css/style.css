@@ -226,3 +226,249 @@ button:disabled {
 #qrcode {
     margin-top: 8px;
 }
+
+.form-group {
+    text-align: left;
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1a1a2e;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #4361ee;
+}
+
+.ticket-info {
+    margin: 8px 0 16px;
+}
+
+.ticket-info p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px !important;
+}
+
+.add-service-btn {
+    background: none;
+    color: #4361ee;
+    border: 1.5px dashed #4361ee;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.add-service-btn:hover {
+    background: #f0f4ff;
+}
+
+.service-item {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.service-item input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.service-item input:focus {
+    border-color: #4361ee;
+}
+
+.remove-service-btn {
+    background: none;
+    color: #e53e3e;
+    border: 1.5px solid #e53e3e;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.remove-service-btn:hover {
+    background: #fff5f5;
+}
+
+.customer-detail {
+    font-size: 13px;
+    color: #555;
+    margin-left: 8px;
+}
+
+.position-badge {
+    display: block;
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 2px;
+}
+
+.serving-details {
+    margin-top: 8px;
+}
+
+.serving-details p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px !important;
+}
+
+.display-body {
+    background: #0f172a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.display-container {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+}
+
+.display-header {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.display-header h1 {
+    font-size: 32px;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.display-header p {
+    font-size: 18px;
+    color: #94a3b8;
+}
+
+.display-serving-card {
+    grid-column: 1 / -1;
+    background: #4361ee;
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+}
+
+.display-next-card {
+    background: #1e293b;
+    border-radius: 24px;
+    padding: 30px;
+}
+
+.display-waiting-card {
+    background: #1e293b;
+    border-radius: 24px;
+    padding: 30px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.display-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-bottom: 16px !important;
+}
+
+.display-serving-card .display-label {
+    color: #bfcfff;
+}
+
+.display-ticket {
+    font-size: 120px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.display-customer-info {
+    margin-top: 8px;
+}
+
+.display-customer-info p {
+    font-size: 22px;
+    color: #ffffff;
+    margin-bottom: 4px !important;
+}
+
+.display-waiting-count {
+    font-size: 80px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.display-next-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #2d3f55;
+}
+
+.display-next-item:last-child {
+    border-bottom: none;
+}
+
+.display-next-ticket {
+    font-size: 20px;
+    font-weight: 700;
+    color: #4361ee;
+    min-width: 48px;
+}
+
+.display-next-name {
+    font-size: 16px;
+    color: #ffffff;
+    flex: 1;
+}
+
+.display-next-service {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.display-empty {
+    color: #475569;
+    font-size: 14px;
+    margin-bottom: 0 !important;
+}
