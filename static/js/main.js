@@ -1,22 +1,35 @@
 let myTicket = null;
+let myCounterId = null;
 let statusInterval = null;
 
 function loadServices() {
-    fetch('/api/queue')
+    fetch('/api/services')
         .then(res => res.json())
         .then(data => {
             const select = document.getElementById('service-select');
-            if (data.error || !data.services || data.services.length === 0) {
-                select.innerHTML = '<option value="General Service">General Service</option>';
+            if (!data || data.length === 0) {
+                select.innerHTML = '<option value="">No active counters</option>';
                 return;
             }
-            select.innerHTML = data.services
-                .map(s => `<option value="${s}">${s}</option>`)
-                .join('');
+
+            let html = '<option value="">Select a service...</option>';
+            let currentCounter = '';
+
+            data.forEach(item => {
+                if (item.counter_name !== currentCounter) {
+                    if (currentCounter !== '') html += '</optgroup>';
+                    html += `<optgroup label="${item.counter_name}">`;
+                    currentCounter = item.counter_name;
+                }
+                html += `<option value="${item.service}" data-counter-id="${item.counter_id}">${item.service}</option>`;
+            });
+
+            html += '</optgroup>';
+            select.innerHTML = html;
         })
         .catch(() => {
             document.getElementById('service-select').innerHTML =
-                '<option value="General Service">General Service</option>';
+                '<option value="">Could not load services</option>';
         });
 }
 
@@ -24,7 +37,10 @@ function joinQueue() {
     const btn = document.getElementById('join-btn');
     const errorMsg = document.getElementById('error-msg');
     const customerName = document.getElementById('customer-name').value.trim();
-    const service = document.getElementById('service-select').value;
+    const serviceSelect = document.getElementById('service-select');
+    const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+    const service = serviceSelect.value;
+    const counterId = selectedOption ? selectedOption.getAttribute('data-counter-id') : null;
 
     if (!customerName) {
         errorMsg.textContent = 'Please enter your name';
@@ -32,7 +48,7 @@ function joinQueue() {
         return;
     }
 
-    if (!service) {
+    if (!service || !counterId) {
         errorMsg.textContent = 'Please select a service';
         errorMsg.classList.remove('hidden');
         return;
@@ -45,7 +61,11 @@ function joinQueue() {
     fetch('/api/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_name: customerName, service: service })
+        body: JSON.stringify({
+            customer_name: customerName,
+            service: service,
+            counter_id: parseInt(counterId)
+        })
     })
     .then(res => res.json())
     .then(data => {
@@ -58,12 +78,14 @@ function joinQueue() {
         }
 
         myTicket = data.ticket_number;
+        myCounterId = parseInt(counterId);
 
         document.getElementById('join-section').classList.add('hidden');
         document.getElementById('ticket-section').classList.remove('hidden');
         document.getElementById('ticket-display').textContent = myTicket;
         document.getElementById('customer-name-display').textContent = `Name: ${data.customer_name}`;
         document.getElementById('service-display').textContent = `Service: ${data.service}`;
+        document.getElementById('counter-display').textContent = `Counter: ${data.counter_name}`;
 
         updateStatus();
         statusInterval = setInterval(updateStatus, 5000);
@@ -77,9 +99,9 @@ function joinQueue() {
 }
 
 function updateStatus() {
-    if (!myTicket) return;
+    if (!myTicket || !myCounterId) return;
 
-    fetch(`/api/status/${myTicket}`)
+    fetch(`/api/status/${myCounterId}/${myTicket}`)
         .then(res => res.json())
         .then(data => {
             if (data.error) return;
@@ -92,7 +114,7 @@ function updateStatus() {
             const statusMsg = document.getElementById('status-msg');
 
             if (data.status === 'serving') {
-                statusMsg.textContent = "🎉 It's your turn! Please proceed.";
+                statusMsg.textContent = "🎉 It's your turn! Please proceed to " + data.counter_name;
                 clearInterval(statusInterval);
             } else if (data.position === 1) {
                 statusMsg.textContent = 'You are next!';

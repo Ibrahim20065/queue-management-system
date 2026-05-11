@@ -12,57 +12,71 @@
 
         <div class="header">
             <h1>Staff Dashboard</h1>
-            <p>Manage the queue from here</p>
+            <p>Manage your counters from here</p>
         </div>
 
-        <!-- Create Queue Card -->
-        <div class="card" id="create-queue-card">
-            <h2>Create New Queue</h2>
-
-            <div class="form-group">
-                <label for="queue-name">Queue Name</label>
-                <input type="text" id="queue-name" placeholder="e.g. Main Counter, Branch A" value="Main Queue" />
+        <!-- Analytics -->
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <span class="stat-card-label">Served Today</span>
+                <span class="stat-card-value" id="stat-served">0</span>
             </div>
-
-            <div class="form-group">
-                <label>Services Offered</label>
-                <div id="services-list">
-                    <div class="service-item">
-                        <input type="text" placeholder="e.g. Account Opening" class="service-input" />
-                        <button class="remove-service-btn" onclick="removeService(this)">✕</button>
-                    </div>
-                </div>
-                <button class="add-service-btn" onclick="addService()">+ Add Service</button>
+            <div class="stat-card">
+                <span class="stat-card-label">Waiting</span>
+                <span class="stat-card-value" id="stat-waiting">0</span>
             </div>
+            <div class="stat-card">
+                <span class="stat-card-label">Popular Service</span>
+                <span class="stat-card-value small" id="stat-popular">N/A</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-label">Active Counters</span>
+                <span class="stat-card-value" id="stat-counters">0</span>
+            </div>
+        </div>
 
-            <button onclick="createQueue()">Start Queue</button>
+        <!-- Create Counter -->
+        <div class="card">
+            <h2>Open New Counter</h2>
+            <div class="form-group">
+                <label for="counter-name">Counter Name</label>
+                <select id="counter-name">
+                    <option value="">Select a counter...</option>
+                    <option value="Counter 1 — General Services">Counter 1 — General Services</option>
+                    <option value="Counter 2 — Loans & Mortgages">Counter 2 — Loans & Mortgages</option>
+                    <option value="Counter 3 — Cards & Payments">Counter 3 — Cards & Payments</option>
+                    <option value="Counter 4 — Account Management">Counter 4 — Account Management</option>
+                    <option value="Counter 5 — Customer Support">Counter 5 — Customer Support</option>
+                    <option value="VIP Counter">VIP Counter</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="counter-services">Services Offered</label>
+                <select id="counter-services" multiple size="6">
+                    <option value="Account Opening">Account Opening</option>
+                    <option value="Account Closure">Account Closure</option>
+                    <option value="Loan Application">Loan Application</option>
+                    <option value="Loan Consultation">Loan Consultation</option>
+                    <option value="Mortgage Inquiry">Mortgage Inquiry</option>
+                    <option value="Credit Card Application">Credit Card Application</option>
+                    <option value="Debit Card Services">Debit Card Services</option>
+                    <option value="Card Replacement">Card Replacement</option>
+                    <option value="Fund Transfer">Fund Transfer</option>
+                    <option value="Fixed Deposit">Fixed Deposit</option>
+                    <option value="Internet Banking Setup">Internet Banking Setup</option>
+                    <option value="General Inquiry">General Inquiry</option>
+                </select>
+                <p class="select-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple services</p>
+            </div>
+            <button onclick="createCounter()">Open Counter</button>
             <p id="control-msg" class="control-msg hidden"></p>
         </div>
 
-        <!-- Queue Controls -->
-        <div class="card" id="queue-controls-card">
-            <h2 id="queue-name-display">Queue</h2>
-            <div class="controls-grid">
-                <button onclick="callNext()" class="btn-success">Call Next</button>
-                <button onclick="closeQueue()" class="btn-danger">Close Queue</button>
-            </div>
-        </div>
-
-        <!-- Now Serving -->
+        <!-- Active Counters -->
         <div class="card">
-            <h2>Now Serving</h2>
-            <div class="ticket-number" id="serving-display">--</div>
-            <div id="serving-details" class="serving-details hidden">
-                <p id="serving-name"></p>
-                <p id="serving-service"></p>
-            </div>
-        </div>
-
-        <!-- Queue List -->
-        <div class="card">
-            <h2>Queue List</h2>
-            <div id="queue-list">
-                <p class="empty-msg">No active queue</p>
+            <h2>Active Counters</h2>
+            <div id="counters-container">
+                <p class="empty-msg">No active counters — create one above</p>
             </div>
         </div>
 

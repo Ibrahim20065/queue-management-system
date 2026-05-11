@@ -17,62 +17,95 @@ def display_page():
     return render_template('display.html')
 
 # ── Customer APIs ───────────────────────────────────
+@app.route('/api/services')
+def get_all_services():
+    conn = get_db()
+    cursor = conn.cursor()
+    counters = cursor.execute('SELECT * FROM counters WHERE is_open = 1').fetchall()
+    result = []
+    for counter in counters:
+        services = cursor.execute(
+            'SELECT * FROM services WHERE counter_id = ?', (counter['id'],)
+        ).fetchall()
+        for service in services:
+            result.append({
+                'counter_id': counter['id'],
+                'counter_name': counter['name'],
+                'service': service['service_name']
+            })
+    conn.close()
+    return jsonify(result)
+
 @app.route('/api/join', methods=['POST'])
 def join_queue():
     data = request.get_json()
     customer_name = data.get('customer_name', 'Guest').strip()
     service = data.get('service', 'General').strip()
+    counter_id = data.get('counter_id')
 
     if not customer_name:
         return jsonify({'error': 'Please enter your name'}), 400
+    if not counter_id:
+        return jsonify({'error': 'Please select a service'}), 400
 
     conn = get_db()
     cursor = conn.cursor()
 
-    queue = cursor.execute('SELECT * FROM queues WHERE is_open = 1').fetchone()
-    if not queue:
+    counter = cursor.execute(
+        'SELECT * FROM counters WHERE id = ? AND is_open = 1', (counter_id,)
+    ).fetchone()
+
+    if not counter:
         conn.close()
-        return jsonify({'error': 'No active queue available'}), 400
+        return jsonify({'error': 'This counter is no longer active'}), 400
 
     last = cursor.execute(
-        'SELECT MAX(ticket_number) as max FROM customers WHERE queue_id = ?',
-        (queue['id'],)
+        'SELECT MAX(ticket_number) as max FROM customers WHERE counter_id = ?',
+        (counter_id,)
     ).fetchone()
 
     ticket_number = (last['max'] or 0) + 1
 
     cursor.execute(
-        'INSERT INTO customers (queue_id, ticket_number, customer_name, service, status) VALUES (?, ?, ?, ?, ?)',
-        (queue['id'], ticket_number, customer_name, service, 'waiting')
+        'INSERT INTO customers (counter_id, ticket_number, customer_name, service, status) VALUES (?, ?, ?, ?, ?)',
+        (counter_id, ticket_number, customer_name, service, 'waiting')
     )
     conn.commit()
 
     position = cursor.execute(
-        'SELECT COUNT(*) as pos FROM customers WHERE queue_id = ? AND status = "waiting" AND ticket_number <= ?',
-        (queue['id'], ticket_number)
+        'SELECT COUNT(*) as pos FROM customers WHERE counter_id = ? AND status = "waiting" AND ticket_number <= ?',
+        (counter_id, ticket_number)
     ).fetchone()['pos']
+
+    waiting_ahead = position - 1
+    estimated_wait = waiting_ahead * 5
 
     conn.close()
     return jsonify({
         'ticket_number': ticket_number,
         'position': position,
         'customer_name': customer_name,
-        'service': service
+        'service': service,
+        'counter_name': counter['name'],
+        'estimated_wait': estimated_wait
     })
 
-@app.route('/api/status/<int:ticket_number>')
-def get_status(ticket_number):
+@app.route('/api/status/<int:counter_id>/<int:ticket_number>')
+def get_status(counter_id, ticket_number):
     conn = get_db()
     cursor = conn.cursor()
 
-    queue = cursor.execute('SELECT * FROM queues WHERE is_open = 1').fetchone()
-    if not queue:
+    counter = cursor.execute(
+        'SELECT * FROM counters WHERE id = ?', (counter_id,)
+    ).fetchone()
+
+    if not counter:
         conn.close()
-        return jsonify({'error': 'No active queue'}), 400
+        return jsonify({'error': 'Counter not found'}), 404
 
     customer = cursor.execute(
-        'SELECT * FROM customers WHERE ticket_number = ? AND queue_id = ?',
-        (ticket_number, queue['id'])
+        'SELECT * FROM customers WHERE ticket_number = ? AND counter_id = ?',
+        (ticket_number, counter_id)
     ).fetchone()
 
     if not customer:
@@ -80,13 +113,13 @@ def get_status(ticket_number):
         return jsonify({'error': 'Ticket not found'}), 404
 
     position = cursor.execute(
-        'SELECT COUNT(*) as pos FROM customers WHERE queue_id = ? AND status = "waiting" AND ticket_number <= ?',
-        (queue['id'], ticket_number)
+        'SELECT COUNT(*) as pos FROM customers WHERE counter_id = ? AND status = "waiting" AND ticket_number <= ?',
+        (counter_id, ticket_number)
     ).fetchone()['pos']
 
     waiting_ahead = cursor.execute(
-        'SELECT COUNT(*) as cnt FROM customers WHERE queue_id = ? AND status = "waiting" AND ticket_number < ?',
-        (queue['id'], ticket_number)
+        'SELECT COUNT(*) as cnt FROM customers WHERE counter_id = ? AND status = "waiting" AND ticket_number < ?',
+        (counter_id, ticket_number)
     ).fetchone()['cnt']
 
     estimated_wait = waiting_ahead * 5
@@ -98,63 +131,97 @@ def get_status(ticket_number):
         'service': customer['service'],
         'status': customer['status'],
         'position': position,
-        'current_serving': queue['current_serving'],
+        'current_serving': counter['current_serving'],
+        'counter_name': counter['name'],
         'estimated_wait': estimated_wait
     })
 
 # ── Staff APIs ──────────────────────────────────────
-@app.route('/api/queue', methods=['GET'])
-def get_queue():
+@app.route('/api/counters', methods=['GET'])
+def get_counters():
     conn = get_db()
     cursor = conn.cursor()
 
-    queue = cursor.execute('SELECT * FROM queues WHERE is_open = 1').fetchone()
-    if not queue:
-        conn.close()
-        return jsonify({'error': 'No active queue'}), 400
+    counters = cursor.execute('SELECT * FROM counters WHERE is_open = 1').fetchall()
+    result = []
 
-    customers = cursor.execute(
-        'SELECT * FROM customers WHERE queue_id = ? ORDER BY ticket_number',
-        (queue['id'],)
-    ).fetchall()
+    for counter in counters:
+        services = cursor.execute(
+            'SELECT * FROM services WHERE counter_id = ?', (counter['id'],)
+        ).fetchall()
 
-    services = cursor.execute(
-        'SELECT * FROM services WHERE queue_id = ?',
-        (queue['id'],)
-    ).fetchall()
+        customers = cursor.execute(
+            'SELECT * FROM customers WHERE counter_id = ? ORDER BY ticket_number',
+            (counter['id'],)
+        ).fetchall()
 
-    serving = cursor.execute(
-        'SELECT * FROM customers WHERE queue_id = ? AND status = "serving"',
-        (queue['id'],)
-    ).fetchone()
+        serving = cursor.execute(
+            'SELECT * FROM customers WHERE counter_id = ? AND status = "serving"',
+            (counter['id'],)
+        ).fetchone()
+
+        done_count = cursor.execute(
+            'SELECT COUNT(*) as cnt FROM customers WHERE counter_id = ? AND status = "done"',
+            (counter['id'],)
+        ).fetchone()['cnt']
+
+        result.append({
+            'id': counter['id'],
+            'name': counter['name'],
+            'current_serving': counter['current_serving'],
+            'serving_customer': dict(serving) if serving else None,
+            'customers': [dict(c) for c in customers],
+            'services': [s['service_name'] for s in services],
+            'done_count': done_count
+        })
 
     conn.close()
-    return jsonify({
-        'queue_name': queue['name'],
-        'current_serving': queue['current_serving'],
-        'serving_customer': dict(serving) if serving else None,
-        'customers': [dict(c) for c in customers],
-        'services': [s['service_name'] for s in services]
-    })
+    return jsonify(result)
 
-@app.route('/api/next', methods=['POST'])
-def call_next():
+@app.route('/api/create-counter', methods=['POST'])
+def create_counter():
+    data = request.get_json()
+    name = data.get('name', 'Counter').strip()
+    services = data.get('services', ['General Service'])
+
     conn = get_db()
     cursor = conn.cursor()
 
-    queue = cursor.execute('SELECT * FROM queues WHERE is_open = 1').fetchone()
-    if not queue:
+    cursor.execute('INSERT INTO counters (name) VALUES (?)', (name,))
+    counter_id = cursor.lastrowid
+
+    for service in services:
+        if service.strip():
+            cursor.execute(
+                'INSERT INTO services (counter_id, service_name) VALUES (?, ?)',
+                (counter_id, service.strip())
+            )
+
+    conn.commit()
+    conn.close()
+    return jsonify({'message': f'Counter "{name}" created successfully', 'counter_id': counter_id})
+
+@app.route('/api/next/<int:counter_id>', methods=['POST'])
+def call_next(counter_id):
+    conn = get_db()
+    cursor = conn.cursor()
+
+    counter = cursor.execute(
+        'SELECT * FROM counters WHERE id = ? AND is_open = 1', (counter_id,)
+    ).fetchone()
+
+    if not counter:
         conn.close()
-        return jsonify({'error': 'No active queue'}), 400
+        return jsonify({'error': 'Counter not found'}), 400
 
     cursor.execute(
-        'UPDATE customers SET status = "done" WHERE queue_id = ? AND status = "serving"',
-        (queue['id'],)
+        'UPDATE customers SET status = "done" WHERE counter_id = ? AND status = "serving"',
+        (counter_id,)
     )
 
     next_customer = cursor.execute(
-        'SELECT * FROM customers WHERE queue_id = ? AND status = "waiting" ORDER BY ticket_number LIMIT 1',
-        (queue['id'],)
+        'SELECT * FROM customers WHERE counter_id = ? AND status = "waiting" ORDER BY ticket_number LIMIT 1',
+        (counter_id,)
     ).fetchone()
 
     if not next_customer:
@@ -166,8 +233,8 @@ def call_next():
         (next_customer['id'],)
     )
     cursor.execute(
-        'UPDATE queues SET current_serving = ? WHERE id = ?',
-        (next_customer['ticket_number'], queue['id'])
+        'UPDATE counters SET current_serving = ? WHERE id = ?',
+        (next_customer['ticket_number'], counter_id)
     )
     conn.commit()
     conn.close()
@@ -177,70 +244,79 @@ def call_next():
         'service': next_customer['service']
     })
 
-@app.route('/api/create-queue', methods=['POST'])
-def create_queue():
-    data = request.get_json()
-    name = data.get('name', 'Main Queue')
-    services = data.get('services', ['General Service'])
-
+@app.route('/api/close-counter/<int:counter_id>', methods=['POST'])
+def close_counter(counter_id):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('UPDATE queues SET is_open = 0')
-    cursor.execute('INSERT INTO queues (name) VALUES (?)', (name,))
-    queue_id = cursor.lastrowid
-
-    for service in services:
-        if service.strip():
-            cursor.execute(
-                'INSERT INTO services (queue_id, service_name) VALUES (?, ?)',
-                (queue_id, service.strip())
-            )
-
+    cursor.execute('UPDATE counters SET is_open = 0 WHERE id = ?', (counter_id,))
     conn.commit()
     conn.close()
-    return jsonify({'message': f'Queue "{name}" created successfully'})
+    return jsonify({'message': 'Counter closed'})
 
-@app.route('/api/close-queue', methods=['POST'])
-def close_queue():
+@app.route('/api/analytics')
+def get_analytics():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('UPDATE queues SET is_open = 0')
-    conn.commit()
-    conn.close()
-    return jsonify({'message': 'Queue closed'})
 
-@app.route('/api/display', methods=['GET'])
+    total_served = cursor.execute(
+        'SELECT COUNT(*) as cnt FROM customers WHERE status = "done"'
+    ).fetchone()['cnt']
+
+    total_waiting = cursor.execute(
+        'SELECT COUNT(*) as cnt FROM customers WHERE status = "waiting"'
+    ).fetchone()['cnt']
+
+    popular_service = cursor.execute(
+        'SELECT service, COUNT(*) as cnt FROM customers GROUP BY service ORDER BY cnt DESC LIMIT 1'
+    ).fetchone()
+
+    active_counters = cursor.execute(
+        'SELECT COUNT(*) as cnt FROM counters WHERE is_open = 1'
+    ).fetchone()['cnt']
+
+    conn.close()
+    return jsonify({
+        'total_served': total_served,
+        'total_waiting': total_waiting,
+        'popular_service': popular_service['service'] if popular_service else 'N/A',
+        'active_counters': active_counters
+    })
+
+@app.route('/api/display')
 def get_display():
     conn = get_db()
     cursor = conn.cursor()
 
-    queue = cursor.execute('SELECT * FROM queues WHERE is_open = 1').fetchone()
-    if not queue:
-        conn.close()
-        return jsonify({'error': 'No active queue'}), 400
+    counters = cursor.execute('SELECT * FROM counters WHERE is_open = 1').fetchall()
+    result = []
 
-    serving = cursor.execute(
-        'SELECT * FROM customers WHERE queue_id = ? AND status = "serving"',
-        (queue['id'],)
-    ).fetchone()
+    for counter in counters:
+        serving = cursor.execute(
+            'SELECT * FROM customers WHERE counter_id = ? AND status = "serving"',
+            (counter['id'],)
+        ).fetchone()
 
-    waiting_count = cursor.execute(
-        'SELECT COUNT(*) as cnt FROM customers WHERE queue_id = ? AND status = "waiting"',
-        (queue['id'],)
-    ).fetchone()['cnt']
+        waiting_count = cursor.execute(
+            'SELECT COUNT(*) as cnt FROM customers WHERE counter_id = ? AND status = "waiting"',
+            (counter['id'],)
+        ).fetchone()['cnt']
 
-    next_customers = cursor.execute(
-        'SELECT * FROM customers WHERE queue_id = ? AND status = "waiting" ORDER BY ticket_number LIMIT 3',
-        (queue['id'],)
-    ).fetchall()
+        next_customers = cursor.execute(
+            'SELECT * FROM customers WHERE counter_id = ? AND status = "waiting" ORDER BY ticket_number LIMIT 3',
+            (counter['id'],)
+        ).fetchall()
+
+        result.append({
+            'id': counter['id'],
+            'name': counter['name'],
+            'current_serving': counter['current_serving'],
+            'serving': dict(serving) if serving else None,
+            'waiting_count': waiting_count,
+            'next_customers': [dict(c) for c in next_customers]
+        })
 
     conn.close()
-    return jsonify({
-        'queue_name': queue['name'],
-        'serving': dict(serving) if serving else None,
-        'waiting_count': waiting_count,
-        'next_customers': [dict(c) for c in next_customers]
-    })
+    return jsonify(result)
 
 # ── Start ───────────────────────────────────────────
 if __name__ == '__main__':

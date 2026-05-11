@@ -8,36 +8,22 @@
 </head>
 <body class="display-body">
 
-    <div class="display-container">
+    <div class="display-wrapper">
 
         <!-- Header -->
         <div class="display-header">
-            <h1 id="display-queue-name">Queue Management System</h1>
+            <h1>🏦 Client Service Queue</h1>
             <p id="display-time"></p>
         </div>
 
-        <!-- Now Serving -->
-        <div class="display-serving-card">
-            <p class="display-label">Now Serving</p>
-            <div class="display-ticket" id="display-ticket">--</div>
-            <div id="display-customer-info" class="display-customer-info hidden">
-                <p id="display-customer-name"></p>
-                <p id="display-customer-service"></p>
-            </div>
+        <!-- Counters Grid -->
+        <div id="display-counters" class="display-counters-grid">
+            <p class="display-empty" style="color:#475569">No active counters</p>
         </div>
 
-        <!-- Up Next -->
-        <div class="display-next-card">
-            <p class="display-label">Up Next</p>
-            <div id="display-next-list">
-                <p class="display-empty">No customers waiting</p>
-            </div>
-        </div>
-
-        <!-- Waiting Count -->
-        <div class="display-waiting-card">
-            <p class="display-label">Customers Waiting</p>
-            <div class="display-waiting-count" id="display-waiting-count">0</div>
+        <!-- Footer -->
+        <div class="display-footer">
+            <p>Please take a number from the customer terminal and wait to be called</p>
         </div>
 
     </div>
@@ -53,45 +39,45 @@
             fetch('/api/display')
                 .then(res => res.json())
                 .then(data => {
-                    if (data.error) {
-                        document.getElementById('display-ticket').textContent = '--';
-                        document.getElementById('display-customer-info').classList.add('hidden');
-                        document.getElementById('display-waiting-count').textContent = '0';
-                        document.getElementById('display-next-list').innerHTML =
-                            '<p class="display-empty">No active queue</p>';
+                    const container = document.getElementById('display-counters');
+
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<p class="display-empty" style="color:#475569;grid-column:1/-1">No active counters</p>';
                         return;
                     }
 
-                    document.getElementById('display-queue-name').textContent = data.queue_name;
-                    document.getElementById('display-waiting-count').textContent = data.waiting_count;
+                    container.innerHTML = data.map(counter => `
+                        <div class="display-counter-card">
+                            <div class="display-counter-header">
+                                <span class="display-counter-name">${counter.name}</span>
+                                <span class="display-counter-waiting">${counter.waiting_count} waiting</span>
+                            </div>
 
-                    if (data.serving) {
-                        document.getElementById('display-ticket').textContent = data.serving.ticket_number;
-                        document.getElementById('display-customer-info').classList.remove('hidden');
-                        document.getElementById('display-customer-name').textContent = data.serving.customer_name;
-                        document.getElementById('display-customer-service').textContent = data.serving.service;
-                    } else {
-                        document.getElementById('display-ticket').textContent = '--';
-                        document.getElementById('display-customer-info').classList.add('hidden');
-                    }
+                            <div class="display-counter-serving">
+                                <p class="display-label">Now Serving</p>
+                                <div class="display-ticket-sm">${counter.current_serving || '--'}</div>
+                                ${counter.serving ? `
+                                <p class="display-serving-name">${counter.serving.customer_name}</p>
+                                <p class="display-serving-service">${counter.serving.service}</p>
+                                ` : '<p class="display-serving-name" style="color:#475569">No one being served</p>'}
+                            </div>
 
-                    if (data.next_customers && data.next_customers.length > 0) {
-                        document.getElementById('display-next-list').innerHTML =
-                            data.next_customers.map(c =>
-                                `<div class="display-next-item">
-                                    <span class="display-next-ticket">#${c.ticket_number}</span>
-                                    <span class="display-next-name">${c.customer_name}</span>
-                                    <span class="display-next-service">${c.service}</span>
-                                </div>`
-                            ).join('');
-                    } else {
-                        document.getElementById('display-next-list').innerHTML =
-                            '<p class="display-empty">No customers waiting</p>';
-                    }
+                            <div class="display-counter-next">
+                                <p class="display-label">Up Next</p>
+                                ${counter.next_customers.length > 0
+                                    ? counter.next_customers.map(c => `
+                                        <div class="display-next-item">
+                                            <span class="display-next-ticket">#${c.ticket_number}</span>
+                                            <span class="display-next-name">${c.customer_name}</span>
+                                            <span class="display-next-service">${c.service}</span>
+                                        </div>`).join('')
+                                    : '<p class="display-empty">No customers waiting</p>'
+                                }
+                            </div>
+                        </div>
+                    `).join('');
                 })
-                .catch(() => {
-                    document.getElementById('display-ticket').textContent = '--';
-                });
+                .catch(() => {});
         }
 
         updateTime();
