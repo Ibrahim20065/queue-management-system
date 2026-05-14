@@ -37,4 +37,10 @@ A digital queuing system that eliminates physical queues. Customers join a queue
 
 ## Live Demo
 
-[Click here to open the app](YOUR_RAILWAY_URL_HERE)
+## Live Demo
+
+[Click here to open the app](https://queue-management-system-rzia.onrender.com)
+
+**Staff Dashboard:** https://queue-management-system-rzia.onrender.com/staff
+
+**Display Wall:** https://queue-management-system-rzia.onrender.com/display
