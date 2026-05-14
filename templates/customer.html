@@ -194,7 +194,7 @@
     return;
 }
 
-if (!/^[a-zA-Z\s'-]+$/.test(name)) {
+if (!/^[a-zA-Z\s]+$/.test(name)) {
     errorEl.textContent = 'Please add valid information — name must contain letters only';
     errorEl.classList.remove('hidden');
     document.querySelectorAll('.kiosk-service-card').forEach(c => c.classList.remove('selected'));
