@@ -3,107 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>MERIDIAN — Staff Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=14">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="mrd-body">
 
-    <div class="container staff-container">
+    <!-- Top Bar -->
+    <div class="mrd-topbar">
 
-        <div class="header">
-            <h1>Staff Dashboard</h1>
-            <p>Manage your counters from here</p>
+        <div class="mrd-topbar-right">
+            <span class="mrd-branch-info">BRANCH 001 — Main</span>
+            <span class="mrd-topbar-sep">·</span>
+            <span class="mrd-time-sm" id="staff-time"></span>
+            <span class="mrd-live">● LIVE</span>
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">☀ Light</button>
+        </div>
+        
+        <div class="mrd-topbar-left">
+            <span class="mrd-logo-icon">◈</span>
+            <span class="mrd-logo-text">MERIDIAN</span>
+            <span class="mrd-topbar-sep">—</span>
+            <span class="mrd-topbar-sub">BRANCH OPS · STAFF DASHBOARD</span>
         </div>
 
-        <!-- Analytics -->
-        <div class="analytics-grid">
-            <div class="stat-card">
-                <span class="stat-card-label">Served Today</span>
-                <span class="stat-card-value" id="stat-served">0</span>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="staff-mrd-main">
+
+        <!-- Analytics Row -->
+        <div class="staff-analytics-row">
+            <div class="staff-stat-card">
+                <span class="staff-stat-label">SERVED TODAY</span>
+                <span class="staff-stat-value" id="stat-served">0</span>
             </div>
-            <div class="stat-card">
-                <span class="stat-card-label">Waiting</span>
-                <span class="stat-card-value" id="stat-waiting">0</span>
+            <div class="staff-stat-card">
+                <span class="staff-stat-label">WAITING</span>
+                <span class="staff-stat-value" id="stat-waiting">0</span>
             </div>
-            <div class="stat-card">
-                <span class="stat-card-label">Popular Service</span>
-                <span class="stat-card-value small" id="stat-popular">N/A</span>
+            <div class="staff-stat-card">
+                <span class="staff-stat-label">POPULAR SERVICE</span>
+                <span class="staff-stat-value small" id="stat-popular">N/A</span>
             </div>
-            <div class="stat-card">
-                <span class="stat-card-label">Active Counters</span>
-                <span class="stat-card-value" id="stat-counters">0</span>
+            <div class="staff-stat-card">
+                <span class="staff-stat-label">ACTIVE COUNTERS</span>
+                <span class="staff-stat-value" id="stat-counters">0</span>
             </div>
         </div>
 
-        <!-- Create Counter -->
-        <div class="card">
-            <h2>Open New Counter</h2>
-            <div class="form-group">
-                <label for="counter-name">Counter Name</label>
-                <select id="counter-name">
-                    <option value="">Select a counter...</option>
-                    <option value="Counter 1 — General Services">Counter 1 — General Services</option>
-                    <option value="Counter 2 — Loans & Mortgages">Counter 2 — Loans & Mortgages</option>
-                    <option value="Counter 3 — Cards & Payments">Counter 3 — Cards & Payments</option>
-                    <option value="Counter 4 — Account Management">Counter 4 — Account Management</option>
-                    <option value="Counter 5 — Customer Support">Counter 5 — Customer Support</option>
-                    <option value="VIP Counter">VIP Counter</option>
-                </select>
+        <!-- Open Counter Form -->
+        <div class="staff-mrd-card">
+            <h2 class="staff-mrd-card-title">Open New Counter</h2>
+            <div class="staff-form-row">
+                <div class="staff-form-group">
+                    <label class="staff-form-label">COUNTER NAME</label>
+                    <select id="counter-name" class="staff-select">
+                        <option value="">Select a counter...</option>
+                        <option value="Counter 1 — General Services">Counter 1 — General Services</option>
+                        <option value="Counter 2 — Loans & Mortgages">Counter 2 — Loans & Mortgages</option>
+                        <option value="Counter 3 — Cards & Payments">Counter 3 — Cards & Payments</option>
+                        <option value="Counter 4 — Account Management">Counter 4 — Account Management</option>
+                        <option value="Counter 5 — Customer Support">Counter 5 — Customer Support</option>
+                        <option value="VIP Counter">VIP Counter</option>
+                    </select>
+                </div>
+                <div class="staff-form-group">
+                    <label class="staff-form-label">SERVICES OFFERED <span class="staff-form-hint">(Hold Ctrl to select multiple)</span></label>
+                    <select id="counter-services" multiple size="27" class="staff-multiselect">
+                        <optgroup label="── General Services">
+                            <option value="Account Opening">Account Opening</option>
+                            <option value="Account Closure">Account Closure</option>
+                            <option value="General Inquiry">General Inquiry</option>
+                            <option value="Document Request">Document Request</option>
+                        </optgroup>
+                        <optgroup label="── Loans & Mortgages">
+                            <option value="Loan Application">Loan Application</option>
+                            <option value="Loan Consultation">Loan Consultation</option>
+                            <option value="Mortgage Inquiry">Mortgage Inquiry</option>
+                        </optgroup>
+                        <optgroup label="── Cards & Payments">
+                            <option value="Credit Card Application">Credit Card Application</option>
+                            <option value="Debit Card Services">Debit Card Services</option>
+                            <option value="Card Replacement">Card Replacement</option>
+                            <option value="Fund Transfer">Fund Transfer</option>
+                        </optgroup>
+                        <optgroup label="── Account Management">
+                            <option value="Fixed Deposit">Fixed Deposit</option>
+                            <option value="Internet Banking Setup">Internet Banking Setup</option>
+                        </optgroup>
+                        <optgroup label="── Customer Support">
+                            <option value="Complaint & Dispute Filing">Complaint & Dispute Filing</option>
+                            <option value="Transaction Dispute">Transaction Dispute</option>
+                            <option value="Fraud Reporting">Fraud Reporting</option>
+                            <option value="General Assistance">General Assistance</option>
+                        </optgroup>
+                        <optgroup label="── VIP Services">
+                            <option value="Priority Account Opening">Priority Account Opening</option>
+                            <option value="Priority Loan Consultation">Priority Loan Consultation</option>
+                            <option value="Wealth Management">Wealth Management</option>
+                            <option value="Investment Advisory">Investment Advisory</option>
+                            <option value="Private Banking Services">Private Banking Services</option>
+                        </optgroup>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="counter-services">Services Offered</label>
-                <select id="counter-services" multiple size="8">
-    <optgroup label="── General Services">
-        <option value="Account Opening">Account Opening</option>
-        <option value="Account Closure">Account Closure</option>
-        <option value="General Inquiry">General Inquiry</option>
-        <option value="Document Request">Document Request</option>
-    </optgroup>
-    <optgroup label="── Loans & Mortgages">
-        <option value="Loan Application">Loan Application</option>
-        <option value="Loan Consultation">Loan Consultation</option>
-        <option value="Mortgage Inquiry">Mortgage Inquiry</option>
-    </optgroup>
-    <optgroup label="── Cards & Payments">
-        <option value="Credit Card Application">Credit Card Application</option>
-        <option value="Debit Card Services">Debit Card Services</option>
-        <option value="Card Replacement">Card Replacement</option>
-        <option value="Fund Transfer">Fund Transfer</option>
-    </optgroup>
-    <optgroup label="── Account Management">
-        <option value="Fixed Deposit">Fixed Deposit</option>
-        <option value="Internet Banking Setup">Internet Banking Setup</option>
-    </optgroup>
-    <optgroup label="── Customer Support">
-        <option value="Complaint & Dispute Filing">Complaint & Dispute Filing</option>
-        <option value="Transaction Dispute">Transaction Dispute</option>
-        <option value="Fraud Reporting">Fraud Reporting</option>
-        <option value="General Assistance">General Assistance</option>
-    </optgroup>
-    <optgroup label="── VIP Services">
-        <option value="Priority Account Opening">Priority Account Opening</option>
-        <option value="Priority Loan Consultation">Priority Loan Consultation</option>
-        <option value="Wealth Management">Wealth Management</option>
-        <option value="Investment Advisory">Investment Advisory</option>
-        <option value="Private Banking Services">Private Banking Services</option>
-    </optgroup>
-</select>
-                <p class="select-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple services</p>
-            </div>
-            <button onclick="createCounter()">Open Counter</button>
-            <p id="control-msg" class="control-msg hidden"></p>
+            <button class="staff-mrd-btn" onclick="createCounter()">Open Counter</button>
+            <p id="control-msg" class="staff-control-msg hidden"></p>
         </div>
 
         <!-- Active Counters -->
-        <div class="card">
-            <h2>Active Counters</h2>
-            <div id="counters-container">
-                <p class="empty-msg">No active counters — create one above</p>
-            </div>
+        <div id="counters-container" class="staff-counters-row">
+            <p class="staff-empty-msg">No active counters — create one above</p>
         </div>
 
     </div>
 
+    <!-- Status Bar -->
+    <div class="mrd-statusbar">
+        <div class="mrd-statusbar-left">
+            <span class="mrd-status-dot">●</span>
+            <span class="mrd-status-txt">ALL SYSTEMS NOMINAL</span>
+            <span class="mrd-status-sep">·</span>
+            <span class="mrd-status-txt">QUEUE ENGINE v1.0.0</span>
+        </div>
+        <div class="mrd-statusbar-right">
+            <span class="mrd-status-txt">MERIDIAN BANK · BRANCH 001</span>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/staff.js') }}"></script>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('staff-time').textContent =
+                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+
+    <script>
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('theme-btn');
+        body.classList.toggle('light-mode');
+        const isLight = body.classList.contains('light-mode');
+        btn.textContent = isLight ? '☾ Dark' : '☀ Light';
+        localStorage.setItem('meridian-theme', isLight ? 'light' : 'dark');
+    }
+
+    // Apply saved theme on load
+    if (localStorage.getItem('meridian-theme') === 'light') {
+        document.body.classList.add('light-mode');
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('theme-btn');
+            if (btn) btn.textContent = '☾ Dark';
+        });
+    }
+</script>
+
 </body>
 </html>

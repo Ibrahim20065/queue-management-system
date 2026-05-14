@@ -141,7 +141,8 @@ button:disabled {
 }
 
 .staff-container {
-    max-width: 600px;
+    max-width: 100%;
+    padding: 20px;
 }
 
 .controls-grid {
@@ -646,6 +647,7 @@ select[multiple] option:checked {
 .mrd-body {
     background: #090e18;
     min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     font-family: 'Inter', sans-serif;
@@ -1095,10 +1097,12 @@ select[multiple] option:checked {
 }
 
 .kiosk-services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 16px;
+    justify-content: center;
 }
 
 .kiosk-service-card {
@@ -1108,7 +1112,12 @@ select[multiple] option:checked {
     padding: 20px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
+    flex: 1;
+    min-width: 180px;
+    max-width: 220px;
 }
+
+
 
 .kiosk-service-card:hover {
     border-color: #2a4060;
@@ -1319,4 +1328,494 @@ select[multiple] option:checked {
     gap: 16px;
     margin-bottom: 28px;
     text-align: center;
+}
+
+.counters-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.counters-row .counter-card {
+    flex: 1;
+    min-width: 280px;
+    
+}
+
+/* ── STAFF MERIDIAN ──────────────────────────── */
+.staff-mrd-main {
+    flex: 1;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.staff-analytics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+.staff-stat-card {
+    background: #0d1520;
+    border: 1px solid #1a2535;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.staff-stat-label {
+    font-size: 10px;
+    color: #4a6080;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+}
+
+.staff-stat-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.staff-stat-value.small {
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+}
+
+.staff-mrd-card {
+    background: #0d1520;
+    border: 1px solid #1a2535;
+    border-radius: 12px;
+    padding: 20px 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.staff-mrd-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.staff-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.staff-form-label {
+    font-size: 10px;
+    color: #4a6080;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-form-hint {
+    color: #2a3a50;
+    letter-spacing: 0;
+    font-weight: 400;
+    text-transform: none;
+}
+
+.staff-select {
+    background: #111c2c;
+    border: 1px solid #1a2535;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.staff-select:focus {
+    border-color: #00e5cc;
+}
+
+.staff-multiselect {
+    background: #111c2c;
+    border: 1px solid #1a2535;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+}
+
+.staff-multiselect option:checked {
+    background: #00e5cc;
+    color: #080d14;
+}
+
+.staff-multiselect optgroup {
+    color: #4a6080;
+    font-size: 11px;
+}
+
+.staff-mrd-btn {
+    background: #00e5cc;
+    color: #080d14;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.staff-mrd-btn:hover {
+    background: #00c9b4;
+}
+
+.staff-control-msg {
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 10px !important;
+    margin-bottom: 0 !important;
+    text-align: center;
+}
+
+.staff-counters-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.staff-empty-msg {
+    font-size: 13px;
+    color: #4a6080;
+    margin: 0 !important;
+}
+
+/* Staff Counter Cards - MERIDIAN style */
+.staff-counter-card {
+    background: #0d1520;
+    border: 1px solid #1a2535;
+    border-radius: 12px;
+    overflow: hidden;
+    flex: 1;
+    min-width: 300px;
+    
+}
+
+.staff-counter-header {
+    background: #4361ee;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.staff-counter-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-counter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.staff-btn-next {
+    background: #00e5cc;
+    color: #080d14;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-btn-close {
+    background: rgba(255,255,255,0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-counter-body {
+    padding: 16px;
+}
+
+.staff-counter-serving {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #111c2c;
+    border: 1px solid #1a2535;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+.staff-serving-label {
+    font-size: 9px;
+    color: #4a6080;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+.staff-serving-number {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: #00e5cc;
+}
+
+.staff-serving-name {
+    font-size: 12px;
+    color: #8a9ab0;
+    margin-left: auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.staff-service-tag {
+    background: rgba(0, 229, 204, 0.08);
+    color: #00e5cc;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    border: 1px solid rgba(0, 229, 204, 0.2);
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.staff-queue-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #111c2c;
+    border: 1px solid #1a2535;
+}
+
+.staff-queue-item.is-serving {
+    border-color: rgba(0, 229, 204, 0.3);
+    background: rgba(0, 229, 204, 0.05);
+}
+
+.staff-queue-ticket {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.staff-queue-item.is-serving .staff-queue-ticket {
+    color: #00e5cc;
+}
+
+.staff-queue-customer {
+    font-size: 12px;
+    color: #8a9ab0;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-queue-service {
+    font-size: 11px;
+    color: #4a6080;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-queue-pos {
+    font-size: 10px;
+    color: #4a6080;
+    font-family: 'Inter', sans-serif;
+}
+
+.staff-done-summary {
+    font-size: 12px;
+    color: #2a3a50;
+    text-align: center;
+    padding: 6px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── LIGHT MODE ──────────────────────────── */
+.light-mode.mrd-body,
+.light-mode.kiosk-body {
+    background: #f0f4f8;
+    color: #1a1a2e;
+}
+
+.light-mode .mrd-topbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.light-mode .mrd-logo-text { color: #1a1a2e; }
+.light-mode .mrd-topbar-sub { color: #888; }
+.light-mode .mrd-branch-info { color: #888; }
+.light-mode .mrd-topbar-sep { color: #e2e8f0; }
+.light-mode .mrd-time-sm { color: #888; }
+
+.light-mode .mrd-statusbar {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
+.light-mode .mrd-status-txt { color: #888; }
+.light-mode .mrd-status-sep { color: #e2e8f0; }
+
+.light-mode .mrd-window,
+.light-mode .mrd-bottom,
+.light-mode .mrd-stats-row,
+.light-mode .staff-mrd-card,
+.light-mode .staff-stat-card,
+.light-mode .staff-counter-card,
+.light-mode .kiosk-ticket-card,
+.light-mode .kiosk-service-card,
+.light-mode .kiosk-input,
+.light-mode .staff-select,
+.light-mode .staff-multiselect {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    color: #1a1a2e;
+}
+
+.light-mode .mrd-window-name,
+.light-mode .mrd-waiting-summary,
+.light-mode .mrd-upnext-label,
+.light-mode .mrd-ann-label,
+.light-mode .mrd-ann-text,
+.light-mode .mrd-nochips,
+.light-mode .mrd-subtitle,
+.light-mode .staff-stat-label,
+.light-mode .staff-form-label,
+.light-mode .staff-serving-label,
+.light-mode .kiosk-subtitle,
+.light-mode .kiosk-service-meta,
+.light-mode .kiosk-service-code,
+.light-mode .kiosk-stat-label,
+.light-mode .kiosk-qr-label,
+.light-mode .kiosk-scan-label,
+.light-mode .kiosk-refresh-note {
+    color: #888;
+}
+
+.light-mode .mrd-ticket,
+.light-mode .mrd-window-customer,
+.light-mode .mrd-big-time,
+.light-mode .mrd-clock,
+.light-mode .mrd-stat-value,
+.light-mode .mrd-title,
+.light-mode .staff-stat-value,
+.light-mode .staff-mrd-card-title,
+.light-mode .staff-counter-title,
+.light-mode .staff-serving-number,
+.light-mode .kiosk-title,
+.light-mode .kiosk-service-name,
+.light-mode .kiosk-ticket-code,
+.light-mode .kiosk-stat-value,
+.light-mode .kiosk-ticket-info p,
+.light-mode .kiosk-input {
+    color: #1a1a2e;
+}
+
+.light-mode .mrd-chip,
+.light-mode .staff-counter-serving,
+.light-mode .staff-queue-item,
+.light-mode .kiosk-ticket-stats {
+    background: #f0f4f8;
+    border-color: #e2e8f0;
+}
+
+.light-mode .mrd-chip-ticket,
+.light-mode .staff-queue-ticket,
+.light-mode .staff-queue-customer {
+    color: #1a1a2e;
+}
+
+.light-mode .mrd-ticket-empty { color: #ccc; }
+.light-mode .mrd-window-open { opacity: 0.4; }
+
+/* Toggle Button */
+.theme-toggle {
+    background: none;
+    border: 1px solid #1a2535;
+    color: #4a6080;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+    border-color: #00e5cc;
+    color: #00e5cc;
+}
+
+.light-mode .theme-toggle {
+    border-color: #e2e8f0;
+    color: #888;
+}
+
+.light-mode .theme-toggle:hover {
+    border-color: #4361ee;
+    color: #4361ee;
 }

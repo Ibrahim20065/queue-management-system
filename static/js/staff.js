@@ -108,7 +108,7 @@ function loadCounters() {
         const container = document.getElementById('counters-container');
 
         if (!data || data.length === 0) {
-            container.innerHTML = '<p class="empty-msg">No active counters — create one above</p>';
+            container.innerHTML = '<p class="staff-empty-msg">No active counters — create one above</p>';
             return;
         }
 
@@ -117,66 +117,59 @@ function loadCounters() {
             const serving = counter.customers.filter(c => c.status === 'serving');
 
             let queueHtml = '';
+
             serving.forEach(c => {
-                queueHtml += `<div class="queue-item serving">
-                    <div>
-                        <span class="ticket-badge serving-badge">🔔 #${c.ticket_number}</span>
-                        <span class="customer-detail">${c.customer_name}</span>
-                    </div>
-                    <span class="queue-status">${c.service}</span>
+                queueHtml += `<div class="staff-queue-item is-serving">
+                    <span class="staff-queue-ticket">🔔 ${c.ticket_code || '#' + c.ticket_number}</span>
+                    <span class="staff-queue-customer">${c.customer_name}</span>
+                    <span class="staff-queue-service">${c.service}</span>
                 </div>`;
             });
 
             waiting.forEach((c, i) => {
-                queueHtml += `<div class="queue-item waiting">
-                    <div>
-                        <span class="ticket-badge">#${c.ticket_number}</span>
-                        <span class="customer-detail">${c.customer_name}</span>
-                    </div>
+                queueHtml += `<div class="staff-queue-item">
+                    <span class="staff-queue-ticket">${c.ticket_code || '#' + c.ticket_number}</span>
+                    <span class="staff-queue-customer">${c.customer_name}</span>
                     <div style="text-align:right">
-                        <span class="queue-status">${c.service}</span>
-                        <span class="position-badge">Position ${i + 1}</span>
+                        <span class="staff-queue-service">${c.service}</span>
+                        <span class="staff-queue-pos" style="display:block">Position ${i + 1}</span>
                     </div>
                 </div>`;
             });
 
             if (counter.done_count > 0) {
-                queueHtml += `<div class="queue-item done-summary">
-                    <span>${counter.done_count} customer(s) served</span>
-                </div>`;
+                queueHtml += `<p class="staff-done-summary">${counter.done_count} customer(s) served</p>`;
             }
 
             if (counter.customers.length === 0) {
-                queueHtml = '<p class="empty-msg">No customers yet</p>';
+                queueHtml = '<p class="staff-empty-msg" style="padding:8px 0">No customers yet</p>';
             }
 
             return `
-                <div class="counter-card">
-                    <div class="counter-header">
-                        <h3>${counter.name}</h3>
-                        <div class="counter-actions">
-                            <button class="btn-success" onclick="callNext(${counter.id})">Call Next</button>
-                            <button class="btn-danger" onclick="closeCounter(${counter.id})">Close</button>
+                <div class="staff-counter-card">
+                    <div class="staff-counter-header">
+                        <span class="staff-counter-title">${counter.name}</span>
+                        <div class="staff-counter-actions">
+                            <button class="staff-btn-next" onclick="callNext(${counter.id})">Call Next</button>
+                            <button class="staff-btn-close" onclick="closeCounter(${counter.id})">Close</button>
                         </div>
                     </div>
-                    <div class="counter-serving">
-                        <span class="counter-serving-label">Now Serving</span>
-                        <span class="counter-serving-number">${counter.current_serving || '--'}</span>
-                        ${counter.serving_customer ? `
-                        <span class="counter-serving-name">
-                            ${counter.serving_customer.customer_name} — ${counter.serving_customer.service}
-                        </span>` : ''}
+                    <div class="staff-counter-body">
+                        <div class="staff-counter-serving">
+                            <span class="staff-serving-label">NOW SERVING</span>
+                            <span class="staff-serving-number">${counter.current_serving || '--'}</span>
+                            ${counter.serving_customer ? `<span class="staff-serving-name">${counter.serving_customer.customer_name} — ${counter.serving_customer.service}</span>` : ''}
+                        </div>
+                        <div class="staff-service-tags">
+                            ${counter.services.map(s => `<span class="staff-service-tag">${s}</span>`).join('')}
+                        </div>
+                        <div class="staff-queue-list">${queueHtml}</div>
                     </div>
-                    <div class="counter-services">
-                        ${counter.services.map(s => `<span class="service-tag">${s}</span>`).join('')}
-                    </div>
-                    <div class="counter-queue">${queueHtml}</div>
                 </div>
             `;
         }).join('');
     });
 }
-
 function loadAnalytics() {
     fetch('/api/analytics')
     .then(res => res.json())
