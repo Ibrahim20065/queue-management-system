@@ -114,6 +114,7 @@ def join_queue():
     conn.close()
     return jsonify({
         'ticket_number': ticket_number,
+        'ticket_code': ticket_code,
         'position': position,
         'customer_name': customer_name,
         'service': service,
@@ -158,6 +159,7 @@ def get_status(counter_id, ticket_number):
     conn.close()
     return jsonify({
         'ticket_number': ticket_number,
+        'ticket_code': customer['ticket_code'],
         'customer_name': customer['customer_name'],
         'service': customer['service'],
         'status': customer['status'],
@@ -363,8 +365,24 @@ def get_display():
     })
 
 # ── Start ───────────────────────────────────────────
-if __name__ == '__main__':
-    init_db()
-    import os
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+@app.route('/api/qr')
+def generate_qr():
+    import qrcode
+    import io
+    import base64
+    from flask import request as flask_request
+
+    url = flask_request.args.get('url', 'https://meridian-bank.com')
+
+    qr = qrcode.QRCode(version=1, box_size=4, border=2)
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="#00e5cc", back_color="#0d1520")
+
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+
+    img_base64 = base64.b64encode(buffer.getvalue()).decode()
+    return f'<img src="data:image/png;base64,{img_base64}" style="border-radius:8px;width:120px;height:120px;">'

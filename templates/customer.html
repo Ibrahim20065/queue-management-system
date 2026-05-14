@@ -3,90 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>MERIDIAN — Kiosk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=13">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
 </head>
-<body>
+<body class="kiosk-body">
 
-    <div class="container">
-
-        <div class="header">
-            <h1>Queue Management</h1>
-            <p>Fill in your details and join the queue</p>
+    <!-- Top Bar -->
+    <div class="mrd-topbar">
+        <div class="mrd-topbar-left">
+            <span class="mrd-logo-icon">◈</span>
+            <span class="mrd-logo-text">MERIDIAN</span>
+            <span class="mrd-topbar-sep">—</span>
+            <span class="mrd-topbar-sub">BRANCH 001 · KIOSK</span>
         </div>
-
-        <!-- QR Code -->
-        <div class="card qr-card">
-            <h2>Scan to Join</h2>
-            <p>Scan this QR code on your phone to join the queue</p>
-            <div id="qrcode"></div>
+        <div class="mrd-topbar-right">
+            <span class="mrd-branch-info">BRANCH 001 — Main</span>
+            <span class="mrd-topbar-sep">·</span>
+            <span class="mrd-time-sm" id="kiosk-time"></span>
+            <span class="mrd-live">● LIVE</span>
         </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="kiosk-main">
 
         <!-- Join Section -->
-        <div id="join-section" class="card">
-            <h2>Join the Queue</h2>
+        <div id="kiosk-join" class="kiosk-join">
 
-            <div class="form-group">
-                <label for="customer-name">Your Name</label>
-                <input type="text" id="customer-name" placeholder="Enter your full name" />
+            <div class="kiosk-welcome">
+    <div class="kiosk-welcome-row">
+        <div>
+            <p class="kiosk-branch-tag">◈ MERIDIAN · BRANCH 001</p>
+            <h1 class="kiosk-title">How can we help today?</h1>
+            <p class="kiosk-subtitle">Enter your name and select a service to receive your queue ticket</p>
+        </div>
+        <div class="kiosk-join-qr-wrap">
+            <div id="kiosk-join-qr"></div>
+            <p class="kiosk-scan-label">SCAN TO OPEN ON PHONE</p>
+        </div>
+    </div>
+</div>
+
+            <!-- Name Input -->
+            <div class="kiosk-name-row">
+                <div class="kiosk-name-input-wrap">
+                    <label class="kiosk-input-label">YOUR NAME</label>
+                    <input type="text" id="kiosk-name" class="kiosk-input" placeholder="Enter your full name" />
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="service-select">Service Required</label>
-                <select id="service-select">
-                    <option value="">Loading services...</option>
-                </select>
+            <!-- Service Cards -->
+            <div class="kiosk-services-grid" id="kiosk-services-grid">
+                <div class="kiosk-loading">Loading available services...</div>
             </div>
 
-            <button id="join-btn" onclick="joinQueue()">Join Queue</button>
-            <p id="error-msg" class="error hidden"></p>
+            <p id="kiosk-error" class="kiosk-error hidden"></p>
+
         </div>
 
         <!-- Ticket Section -->
-        <div id="ticket-section" class="card hidden">
-            <h2>Your Ticket</h2>
-            <div class="ticket-number" id="ticket-display">--</div>
+        <div id="kiosk-ticket" class="kiosk-ticket-section hidden">
 
-            <div class="ticket-info">
-                <p id="customer-name-display"></p>
-                <p id="service-display"></p>
-                <p id="counter-display"></p>
+            <div class="kiosk-ticket-card">
+                <p class="kiosk-branch-tag">◈ MERIDIAN · BRANCH 001</p>
+                <h2 class="kiosk-ticket-title">Your Queue Ticket</h2>
+
+                <div class="kiosk-ticket-code" id="kiosk-ticket-code">--</div>
+
+                <div class="kiosk-ticket-info">
+                    <p id="kiosk-ticket-name"></p>
+                    <p id="kiosk-ticket-service"></p>
+                    <p id="kiosk-ticket-counter"></p>
+                </div>
+
+                <div class="kiosk-ticket-stats">
+                    <div class="kiosk-stat">
+                        <span class="kiosk-stat-label">YOUR POSITION</span>
+                        <span class="kiosk-stat-value" id="kiosk-position">--</span>
+                    </div>
+                    <div class="kiosk-stat">
+                        <span class="kiosk-stat-label">NOW SERVING</span>
+                        <span class="kiosk-stat-value" id="kiosk-serving">--</span>
+                    </div>
+                    <div class="kiosk-stat">
+                        <span class="kiosk-stat-label">EST. WAIT</span>
+                        <span class="kiosk-stat-value" id="kiosk-wait">--</span>
+                    </div>
+                </div>
+
+                <p id="kiosk-status-msg" class="kiosk-status-msg"></p>
+                <p class="kiosk-refresh-note">Position updates automatically every 5 seconds</p>
+
+                <div class="kiosk-qr-section">
+                    <p class="kiosk-qr-label">SCAN TO TRACK ON YOUR PHONE</p>
+                    <div id="qrcode"></div>
+                </div>
             </div>
 
-            <div class="status-box">
-                <div class="stat">
-                    <span class="stat-label">Your position</span>
-                    <span class="stat-value" id="position-display">--</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Now serving</span>
-                    <span class="stat-value" id="serving-display">--</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Est. wait</span>
-                    <span class="stat-value" id="wait-display">--</span>
-                </div>
-            </div>
-
-            <p id="status-msg" class="status-msg"></p>
-            <p class="refresh-note">Position updates automatically every 5 seconds</p>
         </div>
 
     </div>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- Bottom Status Bar -->
+    <div class="mrd-statusbar">
+        <div class="mrd-statusbar-left">
+            <span class="mrd-status-dot">●</span>
+            <span class="mrd-status-txt">ALL SYSTEMS NOMINAL</span>
+            <span class="mrd-status-sep">·</span>
+            <span class="mrd-status-txt">QUEUE ENGINE v1.0.0</span>
+        </div>
+        <div class="mrd-statusbar-right">
+            <span class="mrd-status-txt">NEED HELP? SPEAK TO THE CONCIERGE</span>
+            <span class="mrd-status-sep">·</span>
+            <span class="mrd-status-txt">OPER. 09:00 — 17:00</span>
+        </div>
+    </div>
+
     <script>
-        window.addEventListener('load', function() {
-            new QRCode(document.getElementById("qrcode"), {
-                text: window.location.href,
-                width: 160,
-                height: 160,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
+        let myTicket = null;
+        let myCounterId = null;
+        let statusInterval = null;
+
+        // Clock
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('kiosk-time').textContent =
+                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Load service cards
+        function loadServices() {
+            fetch('/api/services')
+                .then(res => res.json())
+                .then(data => {
+                    const grid = document.getElementById('kiosk-services-grid');
+                    if (!data || data.length === 0) {
+                        grid.innerHTML = '<p class="kiosk-no-services">No services available — please check with staff</p>';
+                        return;
+                    }
+
+                    grid.innerHTML = data.map(item => `
+                        <div class="kiosk-service-card" onclick="selectService('${item.service}', ${item.counter_id}, '${item.counter_name}', this)">
+                            <div class="kiosk-service-top">
+                                <span class="kiosk-service-code">${item.service.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase()} · ${String(item.counter_id).padStart(2, '0')}</span>
+                            </div>
+                            <h3 class="kiosk-service-name">${item.service}</h3>
+                            <p class="kiosk-service-meta">
+                             ${item.queue_count !== undefined ? item.queue_count : 0} in queue · ~${item.estimated_wait > 0 ? item.estimated_wait + ' min wait' : 'No wait'}
+                            </p>
+                        </div>
+                    `).join('');
+                })
+                .catch(() => {
+                    document.getElementById('kiosk-services-grid').innerHTML =
+                        '<p class="kiosk-no-services">Could not load services</p>';
+                });
+        }
+
+        let selectedService = null;
+        let selectedCounterId = null;
+        let selectedCounterName = null;
+
+        function selectService(service, counterId, counterName, el) {
+            document.querySelectorAll('.kiosk-service-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedService = service;
+            selectedCounterId = counterId;
+            selectedCounterName = counterName;
+
+            // Auto join after selecting
+            setTimeout(() => joinQueue(), 300);
+        }
+
+        function joinQueue() {
+            const name = document.getElementById('kiosk-name').value.trim();
+            const errorEl = document.getElementById('kiosk-error');
+
+            if (!name) {
+                errorEl.textContent = 'Please enter your name before selecting a service';
+                errorEl.classList.remove('hidden');
+                document.querySelectorAll('.kiosk-service-card').forEach(c => c.classList.remove('selected'));
+                selectedService = null;
+                return;
+            }
+
+            if (!selectedService || !selectedCounterId) return;
+
+            errorEl.classList.add('hidden');
+
+            fetch('/api/join', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_name: name,
+                    service: selectedService,
+                    counter_id: parseInt(selectedCounterId)
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    errorEl.textContent = data.error;
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                myTicket = data.ticket_number;
+                myCounterId = parseInt(selectedCounterId);
+
+                document.getElementById('kiosk-join').classList.add('hidden');
+                document.getElementById('kiosk-ticket').classList.remove('hidden');
+                document.getElementById('kiosk-ticket-code').textContent = data.ticket_code || '#' + data.ticket_number;
+                document.getElementById('kiosk-ticket-name').textContent = data.customer_name;
+                document.getElementById('kiosk-ticket-service').textContent = data.service;
+                document.getElementById('kiosk-ticket-counter').textContent = data.counter_name;
+
+            
+              // QR code
+              // QR code for ticket
+                fetch(`/api/qr?url=${encodeURIComponent(window.location.href)}`)
+                    .then(res => res.text())
+                    .then(html => {
+                        document.getElementById('qrcode').innerHTML = html;
+                    });
+                updateStatus();
+                statusInterval = setInterval(updateStatus, 5000);
+            })
+            .catch(() => {
+                errorEl.textContent = 'Something went wrong. Please try again.';
+                errorEl.classList.remove('hidden');
             });
-        });
+        }
+
+        function updateStatus() {
+            if (!myTicket || !myCounterId) return;
+            fetch(`/api/status/${myCounterId}/${myTicket}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) return;
+                    document.getElementById('kiosk-position').textContent = data.position;
+                    document.getElementById('kiosk-serving').textContent = data.current_serving || '--';
+                    document.getElementById('kiosk-wait').textContent =
+                        data.estimated_wait > 0 ? `~${data.estimated_wait}m` : 'Soon';
+
+                    const msg = document.getElementById('kiosk-status-msg');
+                    if (data.status === 'serving') {
+                        msg.textContent = "🎉 It's your turn! Please proceed to " + data.counter_name;
+                        msg.style.color = '#00e5cc';
+                        clearInterval(statusInterval);
+                    } else if (data.position === 1) {
+                        msg.textContent = 'You are next!';
+                        msg.style.color = '#00e5cc';
+                    } else {
+                        msg.textContent = `${data.position - 1} person(s) ahead of you`;
+                        msg.style.color = '#4a6080';
+                    }
+                });
+        }
+
+        loadServices();
+
+        fetch(`/api/qr?url=${encodeURIComponent(window.location.href)}`)
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('kiosk-join-qr').innerHTML = html;
+    });
     </script>
+
 </body>
 </html>

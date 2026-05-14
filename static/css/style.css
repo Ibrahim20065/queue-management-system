@@ -1002,3 +1002,321 @@ select[multiple] option:checked {
 }
 
 .mrd-status-sep { color: #182030; font-size: 12px; }
+
+/* ── KIOSK PAGE ──────────────────────────── */
+.kiosk-body {
+    background: #090e18;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+.kiosk-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.kiosk-join {
+    width: 100%;
+    max-width: 780px;
+    position: relative;
+}
+
+.kiosk-welcome {
+    margin-bottom: 28px;
+}
+
+.kiosk-branch-tag {
+    font-size: 11px;
+    color: #00e5cc;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 12px !important;
+}
+
+.kiosk-title {
+    font-size: 36px;
+    font-weight: 300;
+    color: #ffffff;
+    margin: 0 0 8px;
+    line-height: 1.1;
+}
+
+.kiosk-subtitle {
+    font-size: 14px;
+    color: #4a6080;
+    margin: 0 !important;
+}
+
+.kiosk-name-row {
+    margin-bottom: 24px;
+}
+
+.kiosk-name-input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.kiosk-input-label {
+    font-size: 10px;
+    color: #4a6080;
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+
+.kiosk-input {
+    background: #0d1520;
+    border: 1px solid #1a2535;
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 16px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.kiosk-input:focus {
+    border-color: #00e5cc;
+}
+
+.kiosk-input::placeholder {
+    color: #2a3a50;
+}
+
+.kiosk-services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.kiosk-service-card {
+    background: #0d1520;
+    border: 1px solid #1a2535;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.kiosk-service-card:hover {
+    border-color: #2a4060;
+    background: #111c2c;
+}
+
+.kiosk-service-card.selected {
+    border-color: #00e5cc;
+    background: rgba(0, 229, 204, 0.05);
+}
+
+.kiosk-service-top {
+    margin-bottom: 10px;
+}
+
+.kiosk-service-code {
+    font-size: 10px;
+    color: #4a6080;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+.kiosk-service-card.selected .kiosk-service-code {
+    color: #00e5cc;
+}
+
+.kiosk-service-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 0 0 8px;
+    line-height: 1.2;
+}
+
+.kiosk-service-meta {
+    font-size: 12px;
+    color: #4a6080;
+    margin: 0 !important;
+}
+
+.kiosk-error {
+    font-size: 13px;
+    color: #e05050;
+    margin: 0 !important;
+    padding: 10px 14px;
+    background: rgba(224, 80, 80, 0.08);
+    border: 1px solid rgba(224, 80, 80, 0.2);
+    border-radius: 8px;
+}
+
+.kiosk-no-services {
+    color: #4a6080;
+    font-size: 14px;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    margin: 0 !important;
+}
+
+.kiosk-loading {
+    color: #4a6080;
+    font-size: 13px;
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+}
+
+/* Ticket Section */
+.kiosk-ticket-section {
+    width: 100%;
+    max-width: 480px;
+}
+
+.kiosk-ticket-card {
+    background: #0d1520;
+    border: 1px solid #1a2535;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+}
+
+.kiosk-ticket-title {
+    font-size: 16px;
+    font-weight: 400;
+    color: #4a6080;
+    margin: 8px 0 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.kiosk-ticket-code {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 72px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.kiosk-ticket-info {
+    border-top: 1px solid #1a2535;
+    border-bottom: 1px solid #1a2535;
+    padding: 14px 0;
+    margin-bottom: 20px;
+}
+
+.kiosk-ticket-info p {
+    font-size: 14px;
+    color: #8a9ab0;
+    margin-bottom: 4px !important;
+}
+
+.kiosk-ticket-info p:last-child {
+    margin-bottom: 0 !important;
+}
+
+.kiosk-ticket-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #111c2c;
+    border-radius: 10px;
+}
+
+.kiosk-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.kiosk-stat-label {
+    font-size: 9px;
+    color: #4a6080;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.kiosk-stat-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.kiosk-status-msg {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px !important;
+}
+
+.kiosk-refresh-note {
+    font-size: 11px;
+    color: #2a3a50;
+    margin-bottom: 20px !important;
+}
+
+.kiosk-qr-section {
+    border-top: 1px solid #1a2535;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.kiosk-qr-label {
+    font-size: 9px;
+    color: #4a6080;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin: 0 !important;
+}
+
+#qrcode {
+    background: #0d1520;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #1a2535;
+}
+
+.kiosk-scan-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top: 60px;
+    right: 24px;
+    gap: 6px;
+}
+
+.kiosk-scan-label {
+    font-size: 9px;
+    color: #4a6080;
+    letter-spacing: 1.5px;
+    text-align: center;
+    margin: 0 !important;
+}
+
+.kiosk-welcome-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    text-align: center;
+}
