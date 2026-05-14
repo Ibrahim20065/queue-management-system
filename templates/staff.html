@@ -52,20 +52,42 @@
             </div>
             <div class="form-group">
                 <label for="counter-services">Services Offered</label>
-                <select id="counter-services" multiple size="6">
-                    <option value="Account Opening">Account Opening</option>
-                    <option value="Account Closure">Account Closure</option>
-                    <option value="Loan Application">Loan Application</option>
-                    <option value="Loan Consultation">Loan Consultation</option>
-                    <option value="Mortgage Inquiry">Mortgage Inquiry</option>
-                    <option value="Credit Card Application">Credit Card Application</option>
-                    <option value="Debit Card Services">Debit Card Services</option>
-                    <option value="Card Replacement">Card Replacement</option>
-                    <option value="Fund Transfer">Fund Transfer</option>
-                    <option value="Fixed Deposit">Fixed Deposit</option>
-                    <option value="Internet Banking Setup">Internet Banking Setup</option>
-                    <option value="General Inquiry">General Inquiry</option>
-                </select>
+                <select id="counter-services" multiple size="8">
+    <optgroup label="── General Services">
+        <option value="Account Opening">Account Opening</option>
+        <option value="Account Closure">Account Closure</option>
+        <option value="General Inquiry">General Inquiry</option>
+        <option value="Document Request">Document Request</option>
+    </optgroup>
+    <optgroup label="── Loans & Mortgages">
+        <option value="Loan Application">Loan Application</option>
+        <option value="Loan Consultation">Loan Consultation</option>
+        <option value="Mortgage Inquiry">Mortgage Inquiry</option>
+    </optgroup>
+    <optgroup label="── Cards & Payments">
+        <option value="Credit Card Application">Credit Card Application</option>
+        <option value="Debit Card Services">Debit Card Services</option>
+        <option value="Card Replacement">Card Replacement</option>
+        <option value="Fund Transfer">Fund Transfer</option>
+    </optgroup>
+    <optgroup label="── Account Management">
+        <option value="Fixed Deposit">Fixed Deposit</option>
+        <option value="Internet Banking Setup">Internet Banking Setup</option>
+    </optgroup>
+    <optgroup label="── Customer Support">
+        <option value="Complaint & Dispute Filing">Complaint & Dispute Filing</option>
+        <option value="Transaction Dispute">Transaction Dispute</option>
+        <option value="Fraud Reporting">Fraud Reporting</option>
+        <option value="General Assistance">General Assistance</option>
+    </optgroup>
+    <optgroup label="── VIP Services">
+        <option value="Priority Account Opening">Priority Account Opening</option>
+        <option value="Priority Loan Consultation">Priority Loan Consultation</option>
+        <option value="Wealth Management">Wealth Management</option>
+        <option value="Investment Advisory">Investment Advisory</option>
+        <option value="Private Banking Services">Private Banking Services</option>
+    </optgroup>
+</select>
                 <p class="select-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple services</p>
             </div>
             <button onclick="createCounter()">Open Counter</button>

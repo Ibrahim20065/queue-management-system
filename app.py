@@ -3,6 +3,13 @@ from database import get_db, init_db
 
 app = Flask(__name__)
 
+@app.after_request
+def add_no_cache(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 # ── Pages ──────────────────────────────────────────
 @app.route('/')
 def customer_page():
@@ -66,10 +73,34 @@ def join_queue():
 
     ticket_number = (last['max'] or 0) + 1
 
+    ticket_number = (last['max'] or 0) + 1
+
+# Generate service prefix code
+    prefix_map = {
+    'account': 'ACC',
+    'loan': 'LON',
+    'deposit': 'DEP',
+    'card': 'CRD',
+    'mortgage': 'MRT',
+    'foreign': 'FX',
+    'internet': 'INT',
+    'fund': 'FND',
+    'fixed': 'FXD',
+    'general': 'GEN',
+    'inquiry': 'GEN',
+}
+    service_lower = service.lower()
+    prefix = 'GEN'
+    for key, val in prefix_map.items():
+        if key in service_lower:
+            prefix = val
+            break
+    ticket_code = f"{prefix}-{str(ticket_number).zfill(3)}"
+
     cursor.execute(
-        'INSERT INTO customers (counter_id, ticket_number, customer_name, service, status) VALUES (?, ?, ?, ?, ?)',
-        (counter_id, ticket_number, customer_name, service, 'waiting')
-    )
+    'INSERT INTO customers (counter_id, ticket_number, ticket_code, customer_name, service, status) VALUES (?, ?, ?, ?, ?, ?)',
+    (counter_id, ticket_number, ticket_code, customer_name, service, 'waiting')
+)
     conn.commit()
 
     position = cursor.execute(
@@ -290,6 +321,14 @@ def get_display():
     counters = cursor.execute('SELECT * FROM counters WHERE is_open = 1').fetchall()
     result = []
 
+    tickets_today = cursor.execute(
+        'SELECT COUNT(*) as cnt FROM customers'
+    ).fetchone()['cnt']
+
+    total_waiting = cursor.execute(
+        'SELECT COUNT(*) as cnt FROM customers WHERE status = "waiting"'
+    ).fetchone()['cnt']
+
     for counter in counters:
         serving = cursor.execute(
             'SELECT * FROM customers WHERE counter_id = ? AND status = "serving"',
@@ -302,7 +341,7 @@ def get_display():
         ).fetchone()['cnt']
 
         next_customers = cursor.execute(
-            'SELECT * FROM customers WHERE counter_id = ? AND status = "waiting" ORDER BY ticket_number LIMIT 3',
+            'SELECT * FROM customers WHERE counter_id = ? AND status = "waiting" ORDER BY ticket_number LIMIT 4',
             (counter['id'],)
         ).fetchall()
 
@@ -312,11 +351,16 @@ def get_display():
             'current_serving': counter['current_serving'],
             'serving': dict(serving) if serving else None,
             'waiting_count': waiting_count,
-            'next_customers': [dict(c) for c in next_customers]
+            'next_customers': [dict(c) for c in next_customers],
+            'status': 'busy' if serving else 'open'
         })
 
     conn.close()
-    return jsonify(result)
+    return jsonify({
+        'counters': result,
+        'tickets_today': tickets_today,
+        'total_waiting': total_waiting
+    })
 
 # ── Start ───────────────────────────────────────────
 if __name__ == '__main__':

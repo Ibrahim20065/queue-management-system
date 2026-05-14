@@ -3,79 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue Display</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>MERIDIAN — Display Wall</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="display-body">
+<body class="mrd-body">
 
-    <div class="display-wrapper">
+    <!-- Top Bar -->
+    <div class="mrd-topbar">
+    <div class="mrd-topbar-left">
+        <span class="mrd-logo-icon">◈</span>
+        <span class="mrd-logo-text">MERIDIAN</span>
+        <span class="mrd-topbar-sep">—</span>
+        <span class="mrd-topbar-sub">DISPLAY WALL</span>
+    </div>
+    <div class="mrd-topbar-right">
+        <span class="mrd-branch-info">BRANCH 001 — Main</span>
+        <span class="mrd-topbar-sep">·</span>
+        <span class="mrd-tz">TZ UTC+08</span>
+        <span class="mrd-topbar-sep">·</span>
+        <span class="mrd-time-sm" id="mrd-time-sm"></span>
+        <span class="mrd-live">● LIVE</span>
+    </div>
+</div>
 
-        <!-- Header -->
-        <div class="display-header">
-            <h1>🏦 Client Service Queue</h1>
-            <p id="display-time"></p>
+    <!-- Main -->
+    <div class="mrd-main">
+
+        <!-- Header Row -->
+        <div class="mrd-header-row">
+            <div>
+                <h1 class="mrd-title"><span class="mrd-cyan">Now Serving</span> — Branch 001</h1>
+                <p class="mrd-subtitle" id="mrd-subtitle">0 waiting · avg ~5 min</p>
+            </div>
+            <div class="mrd-big-time" id="mrd-big-time"></div>
         </div>
 
-        <!-- Counters Grid -->
-        <div id="display-counters" class="display-counters-grid">
-            <p class="display-empty" style="color:#475569">No active counters</p>
+        <!-- Windows Grid -->
+        <div class="mrd-grid" id="mrd-grid">
+            <div class="mrd-empty">No active counters — please check with staff</div>
         </div>
 
-        <!-- Footer -->
-        <div class="display-footer">
-            <p>Please take a number from the customer terminal and wait to be called</p>
+        <!-- Bottom Bar -->
+        <div class="mrd-bottom">
+            <div class="mrd-upnext">
+                <span class="mrd-upnext-label">UP NEXT</span>
+                <div class="mrd-chips" id="mrd-chips">
+                    <span class="mrd-nochips">No customers waiting</span>
+                </div>
+            </div>
+            <div class="mrd-announcement">
+                <span class="mrd-ann-label">BRANCH ANNOUNCEMENT</span>
+                <span class="mrd-ann-text">Welcome to Meridian Bank · Please take a number from the kiosk · Our staff are here to help you · Mon–Fri 09:00–17:00</span>
+            </div>
         </div>
 
+    </div>
+
+    <!-- Status Bar -->
+    <div class="mrd-statusbar">
+        <div class="mrd-statusbar-left">
+            <span class="mrd-status-dot">●</span>
+            <span class="mrd-status-txt">ALL SYSTEMS NOMINAL</span>
+            <span class="mrd-status-sep">·</span>
+            <span class="mrd-status-txt">QUEUE ENGINE v1.0.0</span>
+            <span class="mrd-status-sep">·</span>
+            <span class="mrd-status-txt">TICKETS TODAY · <span id="mrd-tickets">0</span></span>
+        </div>
+        <div class="mrd-statusbar-right">
+            <span class="mrd-status-txt">OPER. 09:00 — 17:00</span>
+        </div>
     </div>
 
     <script>
         function updateTime() {
             const now = new Date();
-            document.getElementById('display-time').textContent =
-                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const hhmm = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            document.getElementById('mrd-time-sm').textContent = hhmm;
+            document.getElementById('mrd-big-time').textContent = hhmm;
         }
 
         function loadDisplay() {
             fetch('/api/display')
                 .then(res => res.json())
                 .then(data => {
-                    const container = document.getElementById('display-counters');
+                    const counters = data.counters || [];
+                    const totalWaiting = data.total_waiting || 0;
+                    document.getElementById('mrd-tickets').textContent = data.tickets_today || 0;
+                    document.getElementById('mrd-subtitle').textContent = `${totalWaiting} waiting · avg ~5 min`;
 
-                    if (!data || data.length === 0) {
-                        container.innerHTML = '<p class="display-empty" style="color:#475569;grid-column:1/-1">No active counters</p>';
+                    const grid = document.getElementById('mrd-grid');
+
+                    if (counters.length === 0) {
+                        grid.innerHTML = '<div class="mrd-empty">No active counters — please check with staff</div>';
+                        document.getElementById('mrd-chips').innerHTML = '<span class="mrd-nochips">No customers waiting</span>';
                         return;
                     }
 
-                    container.innerHTML = data.map(counter => `
-                        <div class="display-counter-card">
-                            <div class="display-counter-header">
-                                <span class="display-counter-name">${counter.name}</span>
-                                <span class="display-counter-waiting">${counter.waiting_count} waiting</span>
-                            </div>
+                    grid.innerHTML = counters.map(counter => {
+                        const isBusy = counter.serving !== null;
+                        const statusLabel = isBusy ? 'BUSY' : 'OPEN';
+                        const statusClass = isBusy ? 'status-busy' : 'status-open';
+                        const ticketCode = counter.serving
+                            ? (counter.serving.ticket_code || '#' + counter.current_serving)
+                            : null;
+                        const customerName = counter.serving ? counter.serving.customer_name : '';
+                        const serviceAbbr = counter.serving
+                            ? counter.serving.service.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase()
+                            : '';
 
-                            <div class="display-counter-serving">
-                                <p class="display-label">Now Serving</p>
-                                <div class="display-ticket-sm">${counter.current_serving || '--'}</div>
-                                ${counter.serving ? `
-                                <p class="display-serving-name">${counter.serving.customer_name}</p>
-                                <p class="display-serving-service">${counter.serving.service}</p>
-                                ` : '<p class="display-serving-name" style="color:#475569">No one being served</p>'}
+                        return `
+                            <div class="mrd-window ${isBusy ? '' : 'mrd-window-open'}">
+                                <div class="mrd-window-top">
+                                    <span class="mrd-window-label">${counter.name}</span>
+                                    <span class="mrd-window-status ${statusClass}">${statusLabel}</span>
+                                </div>
+                                <div class="mrd-window-body">
+                                    ${ticketCode
+                                        ? `<div class="mrd-ticket">${ticketCode}</div>`
+                                        : `<div class="mrd-ticket mrd-ticket-empty">——</div>`
+                                    }
+                                </div>
+                                <div class="mrd-window-footer">
+                                    <span class="mrd-cust-name">${customerName}</span>
+                                    <span class="mrd-serv-abbr">${serviceAbbr}</span>
+                                </div>
                             </div>
+                        `;
+                    }).join('');
 
-                            <div class="display-counter-next">
-                                <p class="display-label">Up Next</p>
-                                ${counter.next_customers.length > 0
-                                    ? counter.next_customers.map(c => `
-                                        <div class="display-next-item">
-                                            <span class="display-next-ticket">#${c.ticket_number}</span>
-                                            <span class="display-next-name">${c.customer_name}</span>
-                                            <span class="display-next-service">${c.service}</span>
-                                        </div>`).join('')
-                                    : '<p class="display-empty">No customers waiting</p>'
-                                }
+                    const allNext = counters.flatMap(c => c.next_customers || []).slice(0, 6);
+                    if (allNext.length > 0) {
+                        document.getElementById('mrd-chips').innerHTML = allNext.map(c => `
+                            <div class="mrd-chip">
+                                <span class="mrd-chip-code">${c.ticket_code || '#' + c.ticket_number}</span>
+                                <span class="mrd-chip-svc">${c.service.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase()}</span>
                             </div>
-                        </div>
-                    `).join('');
+                        `).join('');
+                    } else {
+                        document.getElementById('mrd-chips').innerHTML = '<span class="mrd-nochips">No customers waiting</span>';
+                    }
                 })
                 .catch(() => {});
         }

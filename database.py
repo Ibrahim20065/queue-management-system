@@ -33,6 +33,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             counter_id INTEGER NOT NULL,
             ticket_number INTEGER NOT NULL,
+            ticket_code TEXT DEFAULT 'GEN-001', 
             customer_name TEXT DEFAULT 'Guest',
             service TEXT DEFAULT 'General',
             status TEXT DEFAULT 'waiting',
