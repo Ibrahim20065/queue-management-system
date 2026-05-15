@@ -642,8 +642,6 @@ select[multiple] option:checked {
 /* ── MERIDIAN DISPLAY ──────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ── MERIDIAN DISPLAY ──────────────────────────── */
-/* ── MERIDIAN DISPLAY ──────────────────────────── */
 .mrd-body {
     background: #090e18;
     min-height: 100vh;
@@ -662,17 +660,24 @@ select[multiple] option:checked {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
-    height: 42px;
+    padding: 0 40px;
+    height: 56px;
     background: #0b1220;
     border-bottom: 1px solid #182030;
     flex-shrink: 0;
+    gap: 20px;
 }
 
 .mrd-topbar-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 100px;
+}
+
+.mrd-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 100px;
 }
 
 .mrd-logo-icon { color: #00e5cc; font-size: 15px; }

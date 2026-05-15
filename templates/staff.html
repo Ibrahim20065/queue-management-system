@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MERIDIAN — Staff Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=14">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="mrd-body">
@@ -19,7 +20,7 @@
             <span class="mrd-live">● LIVE</span>
             <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">☀ Light</button>
         </div>
-        
+
         <div class="mrd-topbar-left">
             <span class="mrd-logo-icon">◈</span>
             <span class="mrd-logo-text">MERIDIAN</span>
@@ -50,6 +51,10 @@
             <div class="staff-stat-card">
                 <span class="staff-stat-label">ACTIVE COUNTERS</span>
                 <span class="staff-stat-value" id="stat-counters">0</span>
+            </div>       
+            <div class="staff-mrd-card" style="margin-bottom:0">
+                <h2 class="staff-mrd-card-title">Service Distribution Today</h2>
+                <canvas id="serviceChart" height="150"></canvas>
             </div>
         </div>
 
@@ -163,6 +168,44 @@
         });
     }
 </script>
+<script>
+let serviceChart = null;
 
+function loadChart() {
+    fetch('/api/analytics')
+    .then(res => res.json())
+    .then(data => {
+        if (!data.service_breakdown) return;
+        const labels = data.service_breakdown.map(s => s.service);
+        const values = data.service_breakdown.map(s => s.count);
+
+        if (serviceChart) serviceChart.destroy();
+
+        const ctx = document.getElementById('serviceChart').getContext('2d');
+        serviceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Customers',
+                    data: values,
+                    backgroundColor: '#4361ee',
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#8a9ab0', font: { size: 11 } }, grid: { color: '#1a2535' } },
+                    y: { ticks: { color: '#8a9ab0', stepSize: 1 }, grid: { color: '#1a2535' }, beginAtZero: true }
+                }
+            }
+        });
+    });
+}
+
+loadChart();
+setInterval(loadChart, 10000);
+</script>
 </body>
 </html>

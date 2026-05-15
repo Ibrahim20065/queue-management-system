@@ -44,6 +44,7 @@ def get_all_services():
     return jsonify(result)
 
 @app.route('/api/join', methods=['POST'])
+
 def join_queue():
     data = request.get_json()
     customer_name = data.get('customer_name', 'Guest').strip()
@@ -58,13 +59,30 @@ def join_queue():
     conn = get_db()
     cursor = conn.cursor()
 
-    counter = cursor.execute(
-        'SELECT * FROM counters WHERE id = ? AND is_open = 1', (counter_id,)
-    ).fetchone()
+    # Smart auto-assignment: find open counter with this service and shortest queue
+    best_counter = cursor.execute('''
+        SELECT c.*, COUNT(cu.id) as queue_length
+        FROM counters c
+        JOIN services s ON s.counter_id = c.id AND s.service_name = ?
+        LEFT JOIN customers cu ON cu.counter_id = c.id AND cu.status = "waiting"
+        WHERE c.is_open = 1
+        GROUP BY c.id
+        ORDER BY queue_length ASC
+        LIMIT 1
+    ''', (service,)).fetchone()
 
-    if not counter:
+    if not best_counter:
+        # Fallback to original counter
+        best_counter = cursor.execute(
+            'SELECT * FROM counters WHERE id = ? AND is_open = 1', (counter_id,)
+        ).fetchone()
+
+    if not best_counter:
         conn.close()
-        return jsonify({'error': 'This counter is no longer active'}), 400
+        return jsonify({'error': 'No active counter available for this service'}), 400
+
+    counter = best_counter
+    counter_id = counter['id']
 
     last = cursor.execute(
         'SELECT MAX(ticket_number) as max FROM customers WHERE counter_id = ?',
@@ -73,22 +91,15 @@ def join_queue():
 
     ticket_number = (last['max'] or 0) + 1
 
-    ticket_number = (last['max'] or 0) + 1
-
-# Generate service prefix code
+    # Generate service prefix code
     prefix_map = {
-    'account': 'ACC',
-    'loan': 'LON',
-    'deposit': 'DEP',
-    'card': 'CRD',
-    'mortgage': 'MRT',
-    'foreign': 'FX',
-    'internet': 'INT',
-    'fund': 'FND',
-    'fixed': 'FXD',
-    'general': 'GEN',
-    'inquiry': 'GEN',
-}
+        'account': 'ACC', 'loan': 'LON', 'deposit': 'DEP',
+        'card': 'CRD', 'mortgage': 'MRT', 'foreign': 'FX',
+        'internet': 'INT', 'fund': 'FND', 'fixed': 'FXD',
+        'general': 'GEN', 'inquiry': 'GEN', 'complaint': 'CSP',
+        'fraud': 'FRD', 'wealth': 'VIP', 'investment': 'VIP',
+        'private': 'VIP', 'priority': 'VIP', 'transaction': 'TRX',
+    }
     service_lower = service.lower()
     prefix = 'GEN'
     for key, val in prefix_map.items():
@@ -98,9 +109,9 @@ def join_queue():
     ticket_code = f"{prefix}-{str(ticket_number).zfill(3)}"
 
     cursor.execute(
-    'INSERT INTO customers (counter_id, ticket_number, ticket_code, customer_name, service, status) VALUES (?, ?, ?, ?, ?, ?)',
-    (counter_id, ticket_number, ticket_code, customer_name, service, 'waiting')
-)
+        'INSERT INTO customers (counter_id, ticket_number, ticket_code, customer_name, service, status) VALUES (?, ?, ?, ?, ?, ?)',
+        (counter_id, ticket_number, ticket_code, customer_name, service, 'waiting')
+    )
     conn.commit()
 
     position = cursor.execute(
@@ -109,7 +120,23 @@ def join_queue():
     ).fetchone()['pos']
 
     waiting_ahead = position - 1
-    estimated_wait = waiting_ahead * 5
+
+    # Real average wait time
+    served_today = cursor.execute(
+        'SELECT COUNT(*) as cnt FROM customers WHERE counter_id = ? AND status = "done"',
+        (counter_id,)
+    ).fetchone()['cnt']
+
+    if served_today >= 3:
+        avg_minutes = cursor.execute('''
+            SELECT AVG((strftime('%s', 'now') - strftime('%s', joined_at)) / 60.0) as avg
+            FROM customers WHERE counter_id = ? AND status = "done"
+        ''', (counter_id,)).fetchone()['avg']
+        avg_per_customer = round(avg_minutes) if avg_minutes else 5
+    else:
+        avg_per_customer = 5
+
+    estimated_wait = waiting_ahead * avg_per_customer
 
     conn.close()
     return jsonify({
@@ -121,7 +148,6 @@ def join_queue():
         'counter_name': counter['name'],
         'estimated_wait': estimated_wait
     })
-
 @app.route('/api/status/<int:counter_id>/<int:ticket_number>')
 def get_status(counter_id, ticket_number):
     conn = get_db()
@@ -307,12 +333,21 @@ def get_analytics():
         'SELECT COUNT(*) as cnt FROM counters WHERE is_open = 1'
     ).fetchone()['cnt']
 
+    service_breakdown = cursor.execute('''
+        SELECT service, COUNT(*) as count 
+        FROM customers 
+        GROUP BY service 
+        ORDER BY count DESC 
+        LIMIT 6
+    ''').fetchall()
+
     conn.close()
     return jsonify({
         'total_served': total_served,
         'total_waiting': total_waiting,
         'popular_service': popular_service['service'] if popular_service else 'N/A',
-        'active_counters': active_counters
+        'active_counters': active_counters,
+        'service_breakdown': [{'service': row['service'], 'count': row['count']} for row in service_breakdown]
     })
 
 @app.route('/api/display')
