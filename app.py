@@ -400,6 +400,16 @@ def get_display():
     })
 
 # ── Start ───────────────────────────────────────────
+@app.route('/api/reset-day', methods=['POST'])
+def reset_day():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM customers')
+    cursor.execute('UPDATE counters SET is_open = 0, current_serving = 0')
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Day reset successfully. All counters closed and records cleared.'})
+
 @app.route('/api/qr')
 def generate_qr():
     import qrcode

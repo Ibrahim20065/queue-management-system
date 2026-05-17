@@ -180,7 +180,22 @@ function loadAnalytics() {
         document.getElementById('stat-counters').textContent = data.active_counters;
     });
 }
+function resetDay() {
+    if (!confirm('Reset the day? This will clear all customer records and close all counters.')) return;
+    fetch('/api/reset-day', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+        showMessage(data.message);
+        loadCounters();
+        loadAnalytics();
+        loadChart();
+    })
+    .catch(() => showMessage('Failed to reset day', true));
+}
 
+loadCounters();
+loadAnalytics();
+setInterval(() => { loadCounters(); loadAnalytics(); }, 5000);
 loadCounters();
 loadAnalytics();
 setInterval(() => { loadCounters(); loadAnalytics(); }, 5000);
