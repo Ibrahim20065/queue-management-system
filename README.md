@@ -25,7 +25,7 @@ A digital queuing system that eliminates physical queues. Customers join a queue
 - **Backend:** Python, Flask
 - **Database:** SQLite
 - **Frontend:** HTML, CSS, JavaScript
-- **Hosting:** Railway
+- **Hosting:** Render
 
 ## How to run locally
 
@@ -35,7 +35,6 @@ A digital queuing system that eliminates physical queues. Customers join a queue
 4. Open `http://127.0.0.1:5000` for the customer page
 5. Open `http://127.0.0.1:5000/staff` for the staff dashboard
 
-## Live Demo
 
 ## Live Demo
 
