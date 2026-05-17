@@ -60,6 +60,7 @@ button:disabled {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    
 }
 
 /* Topbar */
@@ -142,6 +143,8 @@ button:disabled {
     gap: 14px;
     width: 100%;
     box-sizing: border-box;
+    overflow: hidden;
+    min-height: 0;
 }
 
 /* Header Row */
@@ -156,6 +159,7 @@ button:disabled {
     gap: 12px;
     width: 100%;
     flex: 1;
+    overflow: hidden;
 }
 
 .mrd-window {
@@ -259,6 +263,7 @@ button:disabled {
     border: 1px solid #182030;
     border-radius: 8px;
     gap: 20px;
+    flex-shrink: 0;
 }
 
 .mrd-upnext {
